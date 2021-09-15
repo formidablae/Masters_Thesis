@@ -1,0 +1,18 @@
+[submodule "convert_large_xml_to_json"]
+	path = convert_large_xml_to_json
+	url = https://github.com/A-Domain-that-Rocks/convert_large_xml_to_json
+[submodule "adomainthat-rocks_backend"]
+	path = adomainthat-rocks_backend
+	url = https://github.com/A-Domain-that-Rocks/adomainthat-rocks_backend
+[submodule "distribute_data_in_arangodb"]
+	path = distribute_data_in_arangodb
+	url = https://github.com/A-Domain-that-Rocks/distribute_data_in_arangodb
+[submodule "adomainthat-rocks_frontend"]
+	path = adomainthat-rocks_frontend
+	url = https://github.com/A-Domain-that-Rocks/adomainthat-rocks_frontend
+[submodule "masters_thesis"]
+	path = masters_thesis
+	url = https://github.com/A-Domain-that-Rocks/masters_thesis
+[submodule "arangodb_import_json_data"]
+	path = arangodb_import_json_data
+	url = https://github.com/A-Domain-that-Rocks/arangodb_import_json_data
