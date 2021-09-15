@@ -1,0 +1,96 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct notes in publication nodes
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_STRING(pub.note)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_OBJECT(pub.note)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_STRING(pub.note)
+    UPDATE pub WITH { note: [ { value: pub.note, label: "", type: "" } ] } IN publication
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_OBJECT(pub.note)
+    UPDATE pub WITH { note: [ pub.note ] } IN publication
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+    FOR el IN pub.note
+        FILTER IS_STRING(el)
+        LIMIT 50
+        RETURN pub
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+    FOR el IN pub.note
+        FILTER IS_ARRAY(el)
+        LIMIT 50
+        RETURN pub
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+    FOR el IN pub.note
+        FILTER IS_OBJECT(el)
+        LIMIT 50
+        RETURN pub
+
+LET attrs = UNIQUE(FLATTEN(
+    FOR pub IN publication
+        FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+        FOR el IN pub.note
+            FILTER IS_OBJECT(el)
+            RETURN ATTRIBUTES(el)
+))
+RETURN attrs
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+    LET string_notes = FLATTEN(
+        FOR el IN pub.note
+            FILTER IS_STRING(el)
+            RETURN { value: el, type: "", label: "" }
+    )
+    LET object_notes_bad_format = FLATTEN(
+        FOR el IN pub.note
+            FILTER IS_OBJECT(el) AND el.value == null AND el["#text"] != null
+            RETURN { value: el["#text"], type: (el["@type"] == null ? "" : el["@type"]), label: (el["@label"] == null ? "" : el["@label"]) }
+    )
+    LET object_notes_good_format = FLATTEN(
+        FOR el IN pub.note
+            FILTER IS_OBJECT(el) AND el.value != null
+            RETURN el
+    )
+    LET all_notes = UNIQUE(FLATTEN(UNION(string_notes, object_notes_bad_format, object_notes_good_format)))
+    UPDATE pub WITH { note: all_notes } IN publication
+
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+    LET affiliation_data = FLATTEN(
+        FOR el IN pub.note
+            FILTER el.type == "affiliation" OR el.label == "affiliation"
+            RETURN el
+    )
+    UPDATE pub WITH { affiliation: affiliation_data } IN publication
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != [] AND IS_ARRAY(pub.note) AND LENGTH(pub.note) > 0
+    LET non_affiliation_notes = FLATTEN(
+        FOR el IN pub.note
+            FILTER el.type != "affiliation" AND el.label != "affiliation"
+            RETURN el
+    )
+    FILTER LENGTH(non_affiliation_notes) < LENGTH(pub.note)
+    UPDATE pub WITH { note: non_affiliation_notes } IN publication

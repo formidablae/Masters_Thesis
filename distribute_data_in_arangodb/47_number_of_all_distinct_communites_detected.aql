@@ -1,0 +1,45 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to find number of all distinct communites detected.
+
+LET communities_affiliation_institution = (
+	FOR n IN affiliation_institution
+		RETURN DISTINCT n.community
+)
+
+LET communities_author = (
+	FOR n IN author
+		RETURN DISTINCT n.community
+)
+
+LET communities_editor = (
+	FOR n IN editor
+		RETURN DISTINCT n.community
+)
+
+LET communities_journal = (
+	FOR n IN journal
+		RETURN DISTINCT n.community
+)
+
+LET communities_publication = (
+	FOR n IN publication
+		RETURN DISTINCT n.community
+)
+
+LET communities_publisher = (
+	FOR n IN publisher
+		RETURN DISTINCT n.community
+)
+
+LET communities_school = (
+	FOR n IN school
+		RETURN DISTINCT n.community
+)
+
+LET communities_series = (
+	FOR n IN series
+		RETURN DISTINCT n.community
+)
+
+RETURN COUNT(UNION_DISTINCT(communities_affiliation_institution, communities_author, communities_editor, communities_journal, communities_publication, communities_publisher, communities_school, communities_series))

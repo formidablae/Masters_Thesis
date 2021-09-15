@@ -1,0 +1,77 @@
+\begin{figure}[H]%
+		\ThisCenterWallPaper{1}{images/\texorpdfstring{\chaptername\thechapter}}%
+		\captionlistentry[figure]{Icon of \chaptername\ \thechapter}% figure with chapter and section number
+		%\addcontentsline{lof}{figure}{Icon of \chaptername\ \thechapter}% figure without chapter and section number
+		\label{fig:\chaptername\thechapter}%
+\end{figure}
+
+\vspace*{-3.55cm}
+\epigraph{"Jumping to conclusions, may be an indication of Borderline Personality Disorder... I thought you should know."}{\textit{--- Emma Paul}}
+
+\noindent \large{\textbf{This {\MakeLowercase{\chaptername}}'s contents:}}
+\vspace*{-0.55cm}
+\minitoc \mtcskip \minilof
+\vspace*{-1.2cm}
+\section{Summany} \label{section:Conclusions/Summany}
+In this thesis was presented how new technologies like graph databases applying graph theory concepts, algorithms and novel data models can be used to infer information from highly interconnected data such as academic networks of (computer science) scientific publications to the end of detecting collaboration communities between researchers.
+In addition, it was shown how these results can be queried by and delivered to the user in a graphically beautiful fashion making good use of graph rendering libraries like \gls{Cytoscape.JS}, of state-of-the-art frontend web development technologies as React and TypeScript - and of modern \acrshort{API} development paradigms such as \gls{GraphQL} and \gls{Apollo}.
+
+Specifically:
+\setlist{nolistsep} \begin{itemize}[noitemsep]
+	\item Academic publications data from a \gls{dblp.org}\sfcite{Dagstuhl2021} dataset were used;
+	\item The data was stored in a graph database management system like ArangoDB, was distributed into documents representing graph vertices and edges of relationships were drawn between them;
+	\item A graph of about 8.5 million vertices and around 24 million edges was built;
+	\item A \gls{Pregel} \gls{Label Propagation} Community Detection was applied to the graph and 187k clusters were discovered;
+	\item Using the developed \gls{Web Application}, results of the clustering were displayed graphically for a number of University of Bergamo's professors, the Statistical Methods \& Applications journal and affiliated researchers of an ETH Zurich.
+\end{itemize}
+\bigskip
+
+While this thesis may have accomplished the goals stated at the beginning of the work, there is always space to improve what is done and/or find new and better paths in the exploration of the graph of this topic.
+To this end, in the next section are shown some improvements that can be made to the developed \gls{WebApp}, while in \hyperref[section:Conclusions/Furtheravenuesofexploration]{\S\ \ref{section:Conclusions/Furtheravenuesofexploration} - \nameref{section:Conclusions/Furtheravenuesofexploration}} are presented some possible directions for improving the quality of the detected clusters.
+
+\section{Possible improvements} \label{section:Conclusions/Possibleimprovements}
+
+\subsection{Limit maximum number of nodes in the frontend graph} \label{subsection:Conclusions/Possibleimprovements/Limitmaximumnumberofnodesinthefrontendgraph}
+One of the improvements that can be made to the Web App is to limit the maximum number of nodes to display. While it may be better to draw each and every vertex returned by the \acrshort{API} in response to user queries, sometimes that is simply not possible with current commodity client computers. For example, when depth is 3 hops from the start vertex, the client has to render 50k to 250k vertices on average. When the depth becomes 4, the number of vertices becomes something like 800k (and millions of edges) which with current browsers and advancements of client computers is not possible to efficiently render.
+
+Therefore, a way to render graphs with large number of hops from startnode would be to limit (maybe dynamically, or in percentage of the limit) the number of vertices displayable from the 3\textsuperscript{rd} hop and deeper.
+
+\subsection{Collapsible and expandable community compound nodes} \label{subsection:Conclusions/Possibleimprovements/Collapsibleandexpandablecommunitycompoundnodes}
+As briefly mentioned in \hyperref[section:Displayoftheresults/Frontendgraphvisualization]{\S\ \ref{section:Displayoftheresults/Frontendgraphvisualization}} on \hyperref[tobementionedinconclusions/Collapsibleandexpandablecommunitycompoundnodes]{page \pageref{tobementionedinconclusions/Collapsibleandexpandablecommunitycompoundnodes}} another possible improvement is the possibility of having the compound nodes (community nodes) be collapsible and expandable.
+
+A collapsed community node (say community 1) would have edges:
+\setlist{nolistsep} \begin{itemize}[noitemsep]
+	\item to all other linked collapsed communities (say community 2) - this would happen if at least one vertex member of community 1 is linked to at least one vertex member of community 2.
+	\item to all vertices of other expanded (non collapsed) community nodes (say community 3) - this would happen for each member of community 3 that is linked to at least one vertex member of community 1.
+\end{itemize}
+
+A side effect of this feature would also be the possibility to view a larger graph of many more collaboration communities, for example in a regional or national level. Having all community compound nodes collapsed might give valuable information on macrocollaborations of scientific communities.
+
+\section{Further avenues of exploration} \label{section:Conclusions/Furtheravenuesofexploration}
+
+\subsection{Detection of communities and their hierarchy at different scales} \label{subsection:Conclusions/Furtheravenuesofexploration/Detectionofcommunitiesandtheirhierarchyatdifferentscales}
+As briefly mentioned in \hyperref[subsection:Displayoftheresults/Indetailviewofthecollaborationgraph/ProfStefanoParaboschiscommunityofresearchcollaboration]{\S\ \ref{subsection:Displayoftheresults/Indetailviewofthecollaborationgraph/ProfStefanoParaboschiscommunityofresearchcollaboration}} on \hyperref[tobementionedinconclusions/Detectionofcommunitiesandtheirhierarchyatdifferentscales]{page \pageref{tobementionedinconclusions/Detectionofcommunitiesandtheirhierarchyatdifferentscales}}
+a possible topic for further exploration might be the analysis of how the detected communities vary at different scales or how they are structured hierarchically.
+One algorithm that may be employed is the Louvain Modularity presented in \hyperref[subsection:CommunityDetection/Clusteringmethodologies/LouvainModularity]{\S\ \ref{subsection:CommunityDetection/Clusteringmethodologies/LouvainModularity}} on \hyperref[tobementionedinconclusions/Detectionofcommunitiesandtheirhierarchyatdifferentscales]{page \pageref{subsection:CommunityDetection/Clusteringmethodologies/LouvainModularity}}.
+
+\subsection[Performance analysis of the Pregel Community Detection algorithm run on a graph in cluster\-ed, shard\-ed da\-ta\-ba\-se]{Performance analysis of the \gls{Pregel} Community Detection algorithm run on a graph in cluster\-ed, shard\-ed da\-ta\-ba\-se} \label{subsection:Conclusions/Furtheravenuesofexploration/PerformanceanalysisofthePregelCommunityDetectionalgorithmrunonagraphinaclusteredshardeddatabase}
+Another direction of exploration might be the analysis of the performance difference in terms of time and memory between the execution of the \gls{Pregel} Label Propagation Community Detection algorithm on a graph in a database hosted on a single machine vs. the execution of the algorithm on a graph in a database hosted on a cluster of nodes, a sharded database.
+
+\subsection{Exploring overlapping communities detection} \label{subsection:Conclusions/Furtheravenuesofexploration/Exploringoverlappingcommunitiesdetection}
+As briefly mentioned in \hyperref[subsection:Displayoftheresults/Indetailviewofthecollaborationgraph/ProfGiuseppePsailasgraphofcollaborationcommunity]{\S\ \ref{subsection:Displayoftheresults/Indetailviewofthecollaborationgraph/ProfGiuseppePsailasgraphofcollaborationcommunity}} on \hyperref[tobementionedinconclusions/Exploringoverlappingcommunitiesdetection]{page \pageref{tobementionedinconclusions/Exploringoverlappingcommunitiesdetection}}, would be interesting to perform cluster detection with overlapping communities.\sfcite{
+    AmelioPizzuti2014,
+    daFonsecaVieiraXavierEvsukoff2020,
+    Gregory2010,
+    LancichinettiFortunatoKertesz2009,
+    LiHeBindelHopcroft2015,
+    PallaDerenyiFarkasVicsek2005,
+    Shahriari2018,
+    ShenChengCaiHu2009,
+    WangTangGaoLiu2010,
+    XieKelleySzymanski2013,
+    ZhuZhouJiaLiuLiuCao2020%
+}
+If the same GDBMS was to be used again, possible algorithms might the Speaker-Listener Label Propagation (SLPA) or the Disassortative Degree Mixing and Information Diffusion (DMID) - both already present in ArangoDB.
+
+\newpage
+\thispagestyle{empty}

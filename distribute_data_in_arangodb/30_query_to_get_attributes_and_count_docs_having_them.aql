@@ -1,0 +1,58 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to get attributes of a collection
+// and count in how mant docs they appear
+
+// simple jsut top level
+LET col_name = author_affiliation_data
+LET attrs = UNIQUE(FLATTEN(
+    FOR el IN col_name
+        RETURN ATTRIBUTES(el, true, true)
+))
+LET count_attrs = (
+    FOR a IN attrs
+        LET counting = COUNT(
+            FOR el IN col_name
+                FILTER HAS(el, a) AND el[a] != "" AND el[a] != []
+                RETURN 1
+        )
+        RETURN { attribut: a, total: counting }
+)
+RETURN count_attrs
+
+
+
+// complex two levels
+LET col_name = author_affiliation_data
+LET attrs = UNIQUE(FLATTEN(
+    FOR el IN col_name
+        RETURN ATTRIBUTES(el, true, true)
+))
+LET count_attrs = (
+    FOR a IN attrs
+        LET counting = COUNT(
+            FOR el IN col_name
+                FILTER HAS(el, a) AND el[a] != "" AND el[a] != []
+                RETURN 1
+        )
+        LET inner_attrs = UNIQUE(FLATTEN(
+            FOR el IN col_name
+                FILTER IS_ARRAY(el[a]) AND LENGTH(el[a]) > 0
+                    FOR i IN el[a]
+                        FILTER IS_OBJECT(i)
+                        RETURN ATTRIBUTES(i, true, true)
+        ))
+        LET count_inner_attrs = (
+            FOR b IN inner_attrs
+                LET counting_inner = COUNT(
+                    FOR el IN col_name
+                        FILTER IS_ARRAY(el[a]) AND LENGTH(el[a]) > 0
+                            FOR i IN el[a]
+                                FILTER IS_OBJECT(i) AND HAS(i, b) AND i[b] != "" AND i[b] != []
+                                RETURN 1
+                )
+                RETURN { inner_attribut: b, total_inner: counting_inner }
+        )
+        RETURN { attribut: a, total: counting, inner: count_inner_attrs }
+)
+RETURN count_attrs

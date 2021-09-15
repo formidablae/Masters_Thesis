@@ -1,0 +1,70 @@
+% change margin side
+%\reversemarginpar
+
+% custom todo commands
+\newcommandx{\todounsure}[2][1=]{%
+	\todo[%
+		linecolor=red,%
+		backgroundcolor=red!25,%
+		bordercolor=red,%
+		#1,%
+		noprepend,%
+		caption={#2}%
+	]{\protect\hyperref[Listoftodos]{\footnotesize\faListUl}\ #2}%
+}%
+
+\newcommandx{\todochange}[2][1=]{%
+	\todo[%
+		linecolor=blue,%
+		backgroundcolor=blue!25,%
+		bordercolor=blue,%
+		#1,%
+		noprepend,%
+		caption={#2}%
+	]{\protect\hyperref[Listoftodos]{\footnotesize\faListUl}\ #2}%
+}%
+
+\newcommandx{\todoinfo}[2][1=]{%
+	\todo[%
+		linecolor=OliveGreen,%
+		backgroundcolor=OliveGreen!25,%
+		bordercolor=OliveGreen,%
+		#1,%
+		noprepend,%
+		caption={#2}%
+	]{\protect\hyperref[Listoftodos]{\footnotesize\faListUl}\ #2}%
+}%
+
+\newcommandx{\todoimprovement}[2][1=]{%
+	\todo[
+		linecolor=Plum,%
+		backgroundcolor=Plum!25,%
+		bordercolor=Plum,%
+		#1,%
+		noprepend,%
+		caption={#2}%
+	]{\protect\hyperref[Listoftodos]{\footnotesize\faListUl}\ #2}%
+}%
+
+\newcommandx{\todothiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
+
+\newcommandx{\todomissingfigure}[2][1=]{\missingfigure[#1]{#2}}
+
+\makeatletter% check if there are any todonotes with command \iftodos{...}
+\AtEndDocument{%
+    \immediate\write\@auxout{%
+        \gdef\noexpand\totaltodos{%
+            \the\value{@todonotes@numberoftodonotes}%
+        }%
+    }%
+}
+\newcommand*\iftodos{%
+    \@ifundefined{totaltodos}{}{%
+        \ifnum\totaltodos>0
+            \expandafter\@secondoftwo
+        \fi
+        \@gobble
+    }%
+}
+\@ifundefined{totaltodos}{\def\totaltodos{0}}{}
+\makeatother

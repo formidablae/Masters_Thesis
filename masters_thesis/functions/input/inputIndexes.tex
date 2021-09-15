@@ -1,0 +1,86 @@
+\newpage\null\thispagestyle{empty}\newpage
+
+{
+	\input{tex/A01_Colophon.tex} \label{Colophon}
+
+	\cleardoublepage \phantomsection
+	\pagestyle{indexfancy}%
+	\addcontentsline{toc}{chapter}{Index}%
+	\label{Index}%
+	\tableofcontents
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{grayheaderfancy}%
+	\chapter[Dedication]{\vspace*{2cm}\begin{center}{Dedication}\end{center}}%
+	\label{Dedication}
+	\input{tex/A02_Dedication.tex}
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{grayheaderfancy}%
+	\chapter[Abstract]{\vspace*{2cm}\begin{center}{Abstract}\end{center}}%
+	\label{Abstract}
+	\input{tex/A03_Abstract.tex} 
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{grayheaderfancy}%
+	\chapter[Acknowledgments]{\begin{center}{Acknowledgments}\end{center}}%
+	\label{Acknowledgments}%
+	\input{tex/A04_Acknowledgments.tex}
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{listoffiguresfancy}
+	\addcontentsline{toc}{chapter}{List of figures} \label{Listoffigures}
+	\listoffigures
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{listoftablesfancy}
+	\addcontentsline{toc}{chapter}{List of tables} \label{Listoftables}
+	\listoftables
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{listofcodelistingsfancy}
+	\addcontentsline{toc}{chapter}{List of code listings} \label{Listofcodelistings}
+	\lstlistoflistings
+	
+	\cleardoublepage \phantomsection
+	\pagestyle{listofdefinitionstheoremsproofsandremarksfancy}
+	\addcontentsline{toc}{chapter}{List of definitions, theorems, proofs and remarks} \label{Listofdefinitionstheoremsproofsandremarks}
+	\listoftheorems
+	
+	\iftodos{
+    	\cleardoublepage \phantomsection
+    	\pagestyle{listoftodosfancy}
+    	\addcontentsline{toc}{chapter}{List of ToDos Notes}% is not displayed if there aren't any todo notes
+    	\label{Listoftodos}
+    	\listoftodos[\centering List of ToDo Notes]
+    	\newpage
+    	\thispagestyle{empty}
+	}
+}
+
+{
+	\pagestyle{acronymsfancy}
+	\cleardoublepage \phantomsection
+	\chapter[Acronyms]{\centering Acronyms}%
+	\vspace*{-0.5cm}
+	\noindent\begin{center}
+		All acronyms and their pages of appearance in the thesis.
+	\end{center}
+	\vspace*{-0.5cm}
+	\printglossary[
+		type=\acronymtype,%
+		style=mcoltreegroup,%
+		nonumberlist,
+		title={\vspace*{-1cm}}%
+	]\label{Acronyms}
+	\cleardoublepage
+}
+
+{
+	\pagestyle{nomenclaturefancy}
+	\cleardoublepage \phantomsection
+	\addcontentsline{toc}{chapter}{Nomenclature}
+	\input{tex/A06_Nomenclature.tex}
+	\printnomenclature \label{Nomenclature}
+	\cleardoublepage
+}

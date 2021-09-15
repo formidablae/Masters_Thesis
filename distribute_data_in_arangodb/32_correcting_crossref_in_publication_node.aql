@@ -1,0 +1,19 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct crossref in publication nodes
+
+FOR pub IN publication
+    FILTER pub.crossref != null AND pub.crossref != "" AND pub.crossref != [] AND IS_STRING(pub.crossref)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.crossref != null AND pub.crossref != "" AND pub.crossref != [] AND IS_ARRAY(pub.crossref)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.crossref != null AND pub.crossref != "" AND pub.crossref != [] AND IS_OBJECT(pub.crossref)
+    LIMIT 50
+    RETURN pub
+

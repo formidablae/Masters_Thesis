@@ -1,0 +1,36 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between year and publication nodes
+
+FOR pub IN publication
+    FOR y IN year
+        FILTER pub.year != "" AND pub.year == y.number
+        INSERT { _from:             pub._id,
+                 _to:               y._id,
+                 label:             "publication_is_published_in_year",
+                 year:              y.number,
+                 publication_title: pub.title,
+                 first_author:      pub.author[0],
+                 weight:            4 } INTO "year-publication"
+
+FOR pub IN publication
+    FOR y IN year
+        FILTER pub.year != "" AND pub.year == y.number
+        INSERT { _from:             y._id,
+                 _to:               pub._id,
+                 label:             "year_when_was_published_publication",
+                 year:              y.number,
+                 publication_title: pub.title,
+                 first_author:      pub.author[0],
+                 weight:            4 } INTO "year-publication"
+
+// remove duplicate edges @coll: "year-publication"
+FOR e1 IN @@coll
+    FILTER e1.label == "year_when_was_published_publication"
+    FOR e2 IN @@coll
+        FILTER e2.label == "year_when_was_published_publication" AND e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

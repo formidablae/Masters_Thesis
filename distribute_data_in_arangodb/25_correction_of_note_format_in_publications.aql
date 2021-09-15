@@ -1,0 +1,52 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct nodes format in publications
+
+LET note_types = UNIQUE(
+    FOR pub IN publication
+        RETURN TYPENAME(pub.note)
+)
+RETURN note_types
+
+LET note_types = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.note)
+        FOR n IN pub.note
+            RETURN TYPENAME(n)
+)
+RETURN note_types
+
+LET note_attributes = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.note)
+        FOR n IN pub.note
+            FILTER IS_OBJECT(n)
+            RETURN ATTRIBUTES(n)
+)
+RETURN note_attributes
+
+FOR pub IN publication
+    FILTER pub.note != null AND pub.note != "" AND pub.note != []
+    INSERT { key: pub["@key"], pub_type: pub.pub_type, author_count: LENGTH(pub.author), note_list: pub.note } INTO note_temp
+
+LET count_array_note = COUNT(
+    FOR nt IN note_temp
+        FILTER IS_ARRAY(nt.note_list)
+        RETURN 1
+)
+RETURN count_array_note
+
+LET count_string_note = COUNT(
+    FOR nt IN note_temp
+        FILTER IS_STRING(nt.note_list)
+        RETURN 1
+)
+RETURN count_string_note
+
+LET note_array_length = UNIQUE(
+    FOR nt IN note_temp
+        FILTER IS_ARRAY(nt.note_list)
+        RETURN LENGTH(nt.note_list)
+)
+RETURN note_array_length
+

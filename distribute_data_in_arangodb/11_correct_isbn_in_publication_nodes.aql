@@ -1,0 +1,47 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct isbn in publication nodes
+
+LET isbn_types = UNIQUE(
+    FOR pub IN publication
+        RETURN TYPENAME(pub.isbn)
+)
+RETURN isbn_types
+
+LET isbn_types = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.isbn)
+        FOR i IN pub.isbn
+            RETURN TYPENAME(i)
+)
+RETURN isbn_types
+
+LET isbn_attributes = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.isbn)
+        FOR i IN pub.isbn
+            FILTER IS_OBJECT(i)
+            RETURN ATTRIBUTES(i)
+)
+RETURN isbn_attributes
+
+FOR pub IN publication
+    FILTER IS_STRING(pub.isbn)
+    UPDATE pub WITH { isbn: [ { type: "", value: pub.isbn } ] } IN publication
+
+
+FOR pub IN publication
+    FILTER IS_ARRAY(pub.isbn)
+    LET string_isbn = (
+        FOR el IN pub.isbn
+            FILTER IS_STRING(el)
+            RETURN { type: "", value: el }
+    )
+    LET object_isbn = (
+        FOR el IN pub.isbn
+            FILTER IS_OBJECT(el) AND el["#text"] != null
+            RETURN { type: el["@type"], value: el["#text"] }
+    )
+    
+    LET all_isbn = UNION(string_isbn, object_isbn)
+    UPDATE pub WITH { isbn: all_isbn } IN publication

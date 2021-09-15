@@ -1,0 +1,24 @@
+\newtagform{equationwithname}{Expression }{}
+\newtagform{listings}{Code listing }{}
+\renewcommand{\chaptername}{Chapter}
+\mtcsettitle{minitoc}{} % for minitoc title. Empty because \MakeLowercase{\chaptername} gives error (to differentiate between chapters and appendices). Use "\noindent \large{\textbf{This {\MakeLowercase{\chaptername}}'s contents:}}" inside every chapter and appendix.
+\renewcommand{\appendixname}{Appendix}
+\addto\captionsenglish{\renewcommand{\listfigurename}{\vspace*{-4cm}\begin{center}{List of figures}\end{center}}}
+\addto\captionsenglish{\renewcommand{\contentsname}{\begin{center}{Index}\end{center}}}
+\addto\captionsenglish{\renewcommand{\listtablename}{\begin{center}{List of tables}\end{center}}}
+\addto\captionsenglish{\renewcommand{\lstlistlistingname}{\begin{center}{List of code listings}\end{center}}}
+\renewcommand{\listtheoremname}{\begin{center}{List of definitions, theorems, proofs and remarks}\end{center}}
+\addto\captionsenglish{\renewcommand{\acronymname}{\hspace*{-\leftmargin}\hspace*{0.42\textwidth} Acronyms}}
+\renewcommand{\nomname}{\hspace*{-\leftmargin}\hspace*{0.39\textwidth} Nomenclature}
+\addto\captionsenglish{\renewcommand{\glossaryname}{Glossary}}
+
+\renewcommand{\figurename}{Figure}
+\renewcommand{\tablename}{Table}
+\renewcommand{\partname}{Part}
+\renewcommand{\lstlistingname}{%
+	\IfInteger{\theparentlstlisting}{% not sublisting
+		Code listing%
+	}{% sublisting
+		Code sublisting%
+	}%
+}

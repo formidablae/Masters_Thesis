@@ -1,0 +1,63 @@
+\newtheoremstyle{mytheoremstyleformat}{% name
+	3pt% space above
+}{%
+	3pt% space below
+}{%
+	\itshape% font inside the body
+}{%
+	%\parindent% indention
+}{%
+	\bfseries% font in the head
+}{%
+	:% Punctuation after theorem head
+}{%
+	.5em% Space after theorem head
+}{%
+	% Head spec (can be empty, meaning 'normal')
+	\protect\hyperref[Listofdefinitionstheoremsproofsandremarks]{\footnotesize\faListUl}%
+	\ \ %
+	\thmname{#1}%
+	\thmnumber{ #2}%
+	%\textnormal{%
+	\textbf{%
+		\thmnote{ (#3)}%
+	}%
+}%
+
+\theoremstyle{mytheoremstyleformat}
+
+\newtheorem{theorem}{Theorem}[chapter]% add [chapter] or [section] to reset the numeration of chapters or sections
+%\crefname{theorem}{theorem}{theorems}
+%\Crefname{Theorem}{Theorem}{Theorems}
+
+\newtheorem{formula}{Formula}[chapter]% add [chapter] or [section] to reset the numeration of chapters or sections
+%\crefname{formula}{formula}{formulas}
+%\Crefname{Formula}{Formula}{Formulas}
+
+\newtheorem{corollary}{Corollary}[chapter] % add [chapter], [section] or [theorem] to reset the numeration of chapters, sections or theorems. Usually a corollary is related to a theorem.
+%\crefname{corollary}{corollary}{corollaries}
+%\Crefname{Corollary}{Corollary}{Corollaries}
+
+\newtheorem{lemma}[theorem]{Lemma}
+%\crefname{lem}{lemma}{lemmas}
+%\Crefname{Lem}{Lemma}{Lemmas}
+
+\newtheorem{definition}{Definition}[chapter] % add [chapter] or [section] to reset the numeration of chapters or sections
+%\Crefname{definition}{definition}{definitions}
+%\Crefname{Definition}{Definition}{Definitions}
+
+\newtheorem{remark}{Remark}[chapter]
+%\Crefname{remark}{remark}{remarks}
+%\Crefname{Remark}{Remark}{Remarks}
+
+\let\proof\relax% solves error of amsthm defining again proof
+\newtheorem{proof}{Proof}[chapter]
+\let\endproof\relax% solves error of amsthm defining again proof
+%\Crefname{proof}{proof}{proofs}
+%\Crefname{Proof}{Proof}{Proofs}
+
+\renewcommand{\thmcontinues}[1]{% redefinition of continued theorems, definitions, remarks etc without
+	\nameref*{#1}%
+	,\ %
+	\hyperref[#1]{continued}%
+}

@@ -1,0 +1,40 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between school and publication nodes
+
+FOR pub IN publication
+    FOR s IN school
+        FILTER pub.school != null AND IS_ARRAY(pub.school) AND LENGTH(pub.school) > 0 AND s.name IN pub.school
+        INSERT { _from:            pub._id,
+                    _to:               s._id, 
+                    label:             "publication_is_related_to_school",
+                    school_name:       s.name,
+                    publication_title: pub.title,
+                    publication_year:  pub.year,
+                    first_author:      pub.author[0] == null ? "" : pub.author[0],
+                    weight:            7 } INTO "school-publication"
+
+FOR sch IN school
+    UPDATE sch WITH { graph_name: sch.name } IN school
+
+FOR pub IN publication
+    FOR s IN school
+        FILTER pub.school != null AND IS_ARRAY(pub.school) AND LENGTH(pub.school) > 0 AND s.name IN pub.school
+        INSERT { _from:            s._id,
+                    _to:               pub._id, 
+                    label:             "school_is_related_to_publication",
+                    school_name:       s.name,
+                    publication_title: pub.title,
+                    publication_year:  pub.year,
+                    first_author:      pub.author[0] == null ? "" : pub.author[0],
+                    weight:            7 } INTO "school-publication"
+
+// remove duplicate edges @coll: "school-publication"
+FOR e1 IN @@coll
+    FOR e2 IN @@coll
+        FILTER e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

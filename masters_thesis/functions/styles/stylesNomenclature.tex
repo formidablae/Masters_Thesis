@@ -1,0 +1,46 @@
+\renewcommand\nomgroup[1]{% Groups for nomenclature
+	\ifthenelse{\equal{#1}{A}}{
+		\item[\fontsize{8}{9.6}\selectfont\textbf{Bachmann-Landau or asymptotic notations}]
+	}{
+		\ifthenelse{\equal{#1}{C}}{
+			\item[\fontsize{8}{9.6}\selectfont\textbf{Constants}]
+		}{
+			\ifthenelse{\equal{#1}{G}}{
+				\item[\fontsize{8}{9.6}\selectfont\textbf{Graph notation}]
+			}{
+				\ifthenelse{\equal{#1}{L}}{
+					\item[\fontsize{8}{9.6}\selectfont\textbf{Logic notation}]
+				}{
+					\ifthenelse{\equal{#1}{S}}{
+						\item[\fontsize{8}{9.6}\selectfont\textbf{Set notation}]
+					}{
+						\ifthenelse{\equal{#1}{Z}}{
+							\item[\fontsize{8}{9.6}\selectfont\textbf{Other symbols}]
+						}{
+							{}
+						}
+					}
+				}
+			}
+		}
+	}
+	\vspace*{2.5mm}
+}
+
+\renewcommand*{\nompreamble}{%
+	\markboth{\nomname}{\nomname}%
+}
+
+\newcommand{\nomunit}[1]{% add units for nomenclature entries
+	\renewcommand{\nomentryend}{%
+		\hspace*{\fill}[#1]%
+	}
+}
+
+\renewcommand*{\nompreamble}{
+	\begin{multicols}{2}% with multicols* first fills the first column. \begin{multicols*}{2} ... \end{multicols*}
+	%\noindent List of notation symbols\\%
+	\vspace*{-0.9cm}%
+}% multicolumn nomenclature
+\renewcommand*{\nompostamble}{\end{multicols}}%
+\setlength{\nomitemsep}{0.01cm}% spacing between nomenclature entry liness

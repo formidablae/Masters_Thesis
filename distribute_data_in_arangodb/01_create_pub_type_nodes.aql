@@ -1,0 +1,5 @@
+// AQL query to execute in arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create publication types nodes (pub_type)
+FOR type in ['article', 'inproceedings', 'proceedings', 'book', 'incollection', 'phdthesis', 'mastersthesis', 'www', 'person', 'data']
+	INSERT { name: type } INTO pub_type

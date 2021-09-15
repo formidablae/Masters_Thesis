@@ -1,0 +1,39 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to add orcid to author nodes
+
+// LET ptypes = (
+//     FOR ptype IN pub_type
+//         RETURN DISTINCT ptype.name
+// )
+//
+// LET all_authors_unformatted = (
+//     FOR ptype IN ptypes
+//         FOR doc IN dblp
+//             // LIMIT 4000000
+//             FILTER doc[ptype].author != null
+//             RETURN DISTINCT doc[ptype].author
+// )
+//        
+// LET all_authors_formatted_mixed = (
+//     FOR author_list IN all_authors_unformatted
+//         FOR author IN author_list[*]
+//         RETURN DISTINCT author
+// )
+//
+// FOR a IN all_authors_formatted_mixed
+//     INSERT { author_data: a } INTO authors_formatted_mixed
+//
+// LET all_authors_formatted_mixed_with_orcid = (
+//     FOR auth_moredata IN authors_formatted_mixed
+//         FILTER auth_moredata.author_data["@orcid"] != null
+//         RETURN DISTINCT auth_moredata
+// )
+//
+// FOR au IN all_authors_formatted_mixed_with_orcid
+//     INSERT { name: au.author_data["#text"], orcid: au.author_data["@orcid"] } INTO authors_formatted_mixed_with_orcid
+
+FOR auth1 IN authors_formatted_mixed_with_orcid
+    FOR auth2 IN author
+        FILTER auth2.name == auth1.name
+        UPDATE auth2 WITH { orcid: auth1.orcid } IN author

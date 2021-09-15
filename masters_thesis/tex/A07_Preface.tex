@@ -1,0 +1,332 @@
+This thesis is the final chapter of my Computer Science and Engineering Master's Degree.
+Deciding the thesis subject was not an easy choice.
+I was really into the development of some software in \glspl{distributed cloud} related topics.
+There were a few different options proposed to me, worth noting:
+one was akin to \glspl{compiler};
+another one was related to \gls{systems security} with \gls{SELinux}.
+
+In order to bring together the interest for \glspl{distributed system} and the options on the table, I went for an exploratory work in \Gls{container} Isolation with \gls{SELinux} in \gls{Kubernetes}, \gls{OpenShift} Clusters on the supervision of \mysupervisor.
+While the topic was engaging, dense of new knowledge and intensively under \gls{continuous development}, these properties, at least for me, made its \gls{learning curve} pretty steep.
+I had to pivot.
+
+The new chosen topic was on the usage of relatively new database systems to solve a real life problem.
+The problem on which to work was the individuation of the collaboration communities in academia.
+Using graph databases and a community detection algorithm made perfect sense - this way, this thesis was framed in its present shape.
+
+\section{About this thesis} \label{section:Preface/Aboutthisthesis}
+This document describes the work on the thesis done during the ending of the \gls{Masters Degree}.%Master's Degree
+The work started before mid 2021, was initially exploratory and was carried out under the supervision of \mysupervisor.
+
+\subsection{What this thesis covers} \label{subsection:Preface/Aboutthisthesis/Whatthisthesiscovers}
+The topic this thesis treats is the application of a \gls{Label Propagation} Community Detection algorithm to detect the collaboration communities in the academia, between researchers, their publications and so on...
+
+The data on academic publications was obtained from a complete dataset of \citelink[]{Dagstuhl2021} of \citeauthor{Dagstuhl2021} \sfcite{Dagstuhl2021}.
+The version of the dataset is of the 1\textsuperscript{st} of July 2021.
+
+In order to host the data and do the necessary on graph calculations, a Graph Database Management System was used, specifically ArangoDB.
+
+To query the data and visualize the results, an \acrshort{API} and a \gls{frontend} interface were built.
+
+For more details, head to \hyperref[chapter:Introduction]{\S\ \ref{chapter:Introduction} - \nameref{chapter:Introduction}}.
+
+\subsection{Get and run the code} \label{subsection:Preface/Aboutthisthesis/Getandrunthecode}
+\paragraph{Pull the source code}\mbox{}\\\indent
+The instructions to get the source code used for the \gls{data manipulation}, the \gls{import}ing in the database, the further collection updates, the \gls{GraphQL} \acrshort{API} and the frontend - are in \hyperref[appendix:SourceCode]{appendix \S\ \ref{appendix:SourceCode} - \nameref{appendix:SourceCode}}, specifically \hyperref[section:SourceCode/Projectrepositories]{\S\ \ref{section:SourceCode/Projectrepositories} - \nameref{section:SourceCode/Projectrepositories}} on \hyperref[section:SourceCode/Projectrepositories]{page \pageref{section:SourceCode/Projectrepositories}}.
+\par
+\paragraph{Run, build and deploy}\mbox{}\\\indent
+The instructions on how to get everything running are in \hyperref[section:SourceCode/Instructionshowtorunbuildanddeploy]{\S\ \ref{section:SourceCode/Instructionshowtorunbuildanddeploy} - \nameref{section:SourceCode/Instructionshowtorunbuildanddeploy}} on \hyperref[section:SourceCode/Instructionshowtorunbuildanddeploy]{page \pageref{section:SourceCode/Instructionshowtorunbuildanddeploy}}.
+\par
+
+\subsection{Notation conventions used} \label{subsection:Preface/Aboutthisthesis/Notationconventionsused}
+\noindent\textit{Italic}
+
+\noindent Indicates new terms or terms that are non part of standard vocabulary.
+\bigskip
+
+\noindent\texttt{Constant width, monospace} (in black color)
+
+\noindent Used for code listings, as well as within paragraphs to refer to program elements such as variable or function names, databases, data types and instructions.
+\bigskip
+
+\noindent\href{https://en.wikipedia.org/wiki/URL}{\texttt{Constant width, monospace}} or \href{https://en.wikipedia.org/wiki/URL}{normal fontstyle} (in blue color)
+
+Used for links, urls, websites
+\bigskip
+
+\noindent\sfcite{LogoUnibg2021}
+
+\noindent Used for citations.
+Clicking on the number sends to \hyperref[Backmatter:Bibliography]{Bibliography} on \hyperref[Backmatter:Bibliography]{page \pageref{Backmatter:Bibliography}}.
+In Bibliography are also indicated all the pages where each reference has been cited.
+The bibliographic information of a reference is shown in footnotes of a page (see the bottom of the page) only the first time it is cited. Numbering and sorting of references in the bibliography is in ascending order of their citation.
+\bigskip
+
+\noindent This is\footnote{this is a footnote}
+
+\noindent Used for simple footnotes\footnote{not a bibliographic citation}.
+Differently from bibliographic citations, footnotes use superscripted smallcase letters\footnote{uses letters, not numbers} in green color inside round brackets.
+\bigskip
+
+%\noindent\Gls{graph}
+
+%\noindent Komejirushi (reference mark), used to indicate terms part of the glossary or acronyms.
+%It is hyperlinked, following the link sends to the glossary or acronyms index where is possible to see the other pages the term appears in.
+%\bigskip
+
+\noindent\S\ 2.1
+
+\noindent Silcrow (section sign), used to refer to a section or subsection of the document.
+\bigskip
+
+%\noindent\P\ 2.2.2.2.1
+
+%\noindent Pilcrow (paragraph sign), used to refer to a paragraph in the document.
+%\bigskip
+
+\noindent\hyperref[Listoffigures]{\footnotesize\faListUl}\ \ Figure 1.2: A random title
+
+\noindent FontAwesome list icon, used to show a figure (or table, code listing, definition, theorem, proof or remark) is included in the list or figures (or list of tables, of code listings and so on ...).
+It is hyperlinked, clicking on it sends to the list of that element type.
+\bigskip\smallskip
+
+\noindent\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+	\rowcolor{lightestgray}%
+	\rule[-6pt]{-11.5pt}{15pt} & % to fix heigth of the row
+	\hyperref[Index]{Index}
+	\adforn{43}
+	\hyperlink{\chaptername::\thechapter}{\thechapter\ \nameref{\chaptername::\thechapter}}
+	\adforn{43}
+	\hyperlink{section:Preface/Aboutthisthesis}{\ref{section:Preface/Aboutthisthesis} \nameref{section:Preface/Aboutthisthesis}}
+	\adforn{43}
+	\hyperlink{subsection:Preface/Aboutthisthesis/Notationconventionsused}{\ref{subsection:Preface/Aboutthisthesis/Notationconventionsused} \nameref{subsection:Preface/Aboutthisthesis/Notationconventionsused}}\\%
+\end{tabularx}
+
+\noindent Used for breadcrumbs in the header of every page except for the frontmatter and chapters, appendices and bibliography's first page.
+Other then general orientational information on the current topic and position in the chapter, breadcrumbs offer also interactive browsing of the whole document.
+
+\noindent Clicking on \hyperref[Index]{Index} sends to the general contents index.
+
+\noindent Clicking on \hyperlink{\chaptername::\thechapter}{\thechapter\ \nameref{\chaptername::\thechapter}} sends to the current chapters' first page, where its subcontents can be consulted.
+
+\noindent Clicking on \hyperlink{section:Preface/Aboutthisthesis}{\ref{section:Preface/Aboutthisthesis} \nameref{section:Preface/Aboutthisthesis}} sends to the current sections' beginning.
+
+\noindent Clicking on \hyperlink{subsection:Preface/Aboutthisthesis/Notationconventionsused}{\ref{subsection:Preface/Aboutthisthesis/Notationconventionsused} \nameref{subsection:Preface/Aboutthisthesis/Notationconventionsused}} sends to the current subsections' beginning.
+
+\subsection{About the cover illustration} \label{subsection:Preface/Aboutthisthesis/Aboutthecoverillustration}
+On the \hyperref[fig:cover]{cover} and the \hyperref[fig:backcover]{backcover} of the thesis is a picture from \citefirstlastauthor{Clode2018} taken in \citeyear{Clode2018} with caption "\citetitle{Clode2018}". \sfcite{Clode2018}
+
+Symbolically knots can be intended as nodes of a graph, ropes as the edges and the different coloring of these intended as the different communities of that graph.
+
+\subsection{About illustrations on the first page of each chapter or appendix}
+\label{subsection:Preface/Aboutthisthesis/Aboutillustrationsonthefirstpageofeachchapterorappendix}
+Icons placed on the first page of each chapter or appendix were obtained from \citeurl{UXWing2020}. \sfcite{UXWing2020}
+
+\subsection{Graph of order of reading the chapters} \label{subsection:Preface/Aboutthisthesis/Graphoforderofreadingthechapters}
+	Let Chapter X be the begin and Chapter Y the end node of an edge displayed below.
+	
+\noindent If the edge is a \textit{continuous arrow}, in order to read (and well understand) Chapter Y, is \textit{required} to have read Chapter X beforehand.
+
+\noindent If the edge is a \textit{dashed arrow}, in order to read (and well understand) Chapter Y, is \textit{recommended} to have read Chapter X beforehand.
+
+\begin{figure}[H]%
+	\centering%
+	\adjustbox{
+		max width=1\linewidth-8pt,
+		margin*=2pt,
+		cframe=lightestgray 2pt 0pt 0pt,
+		bgcolor=white
+	}{
+		\begin{tikzpicture}[%
+			>=stealth,%
+			every node/.style={
+				text width=1.75cm,
+				align=center,
+				color=white,
+				draw
+			}
+		]
+			
+			% create the nodes,
+			\node (c0) [fill=lightstgray, shape=rectangle, rounded corners] {
+				\hyperref[Preface]{%
+					\ref{Preface}\\%
+					\nameref{Preface}%
+				}%
+			};
+			
+			\node (c1) [fill=lightergray, shape=circle] [
+				below =of c0
+			] {
+				\hyperref[chapter:Introduction]{%
+					Chapter %
+					\ref{chapter:Introduction}\\%
+					\nameref{chapter:Introduction}%
+				}%
+			};
+			
+			\node (c2) [fill=lightstgray, shape=circle] [
+				right =of $(c1)!0.67!(c1.east)$
+			] {
+				\hyperref[chapter:LiteratureReview]{%
+					Chapter %
+					\ref{chapter:LiteratureReview}\\%
+					\nameref{chapter:LiteratureReview}%
+				}%
+			};
+			
+			\node (c3) [fill=lightstgray, shape=circle] [
+				right =of $(c2)!0.67!(c2.east)$
+			] {
+				\hyperref[chapter:CommunityDetection]{%
+					Chapter %
+					\ref{chapter:CommunityDetection}\\%
+					\nameref{chapter:CommunityDetection}%
+				}%
+			};
+			
+			\node (c4) [fill=lightstgray, shape=circle] [
+				right =of $(c3)!0.67!(c3.east)$
+			] {
+				\hyperref[chapter:ImplementingtheWebApp]{%
+					Chapter %
+					\ref{chapter:ImplementingtheWebApp}\\%
+					\nameref{chapter:ImplementingtheWebApp}%
+				}%
+			};
+			
+			\node (c5) [fill=lightstgray, shape=circle] [
+				right =of $(c4)!0.67!(c4.east)$
+			] {
+				\hyperref[chapter:Displayoftheresults]{Chapter %
+				\ref{chapter:Displayoftheresults}\\%
+				\nameref{chapter:Displayoftheresults}%
+			}%
+		};
+			
+			\node (c6) [fill=lightergray, shape=circle] [
+				right =of $(c5)!0.67!(c5.east)$
+			] {
+				\hyperref[chapter:Conclusions]{Chapter \ref{chapter:Conclusions}\\
+				\nameref{chapter:Conclusions}}
+			};
+			
+			\node (c8) [fill=lightstgray, shape=rectangle, rounded corners] [
+				below =of c6
+			] {
+				\hyperref[appendix:APIDocs]{Appendix \ref{appendix:APIDocs}\\
+				\nameref{appendix:APIDocs}}
+			};
+			
+			\node (c7) [fill=lightstgray, shape=rectangle, rounded corners] [
+				left =of $(c8.west)!0.15!(c8)$
+			] {
+				\hyperref[appendix:SourceCode]{%
+					Appendix %
+					\ref{appendix:SourceCode}\\%
+					\nameref{appendix:SourceCode}%
+				}%
+			};
+			
+			\node (c9) [fill=lightstgray, shape=rectangle, rounded corners] [
+				below =of $(c6.south)!0.67!(c8.south)$
+			] {
+				\hyperref[Backmatter:Bibliography]{Bibliography}
+			};
+			
+			% connect the nodes
+			\draw[->, dashed, color=darkgray] (c0)			to					(c1);%
+			\draw[->,		 color=darkgray] (c1)			to					(c2);%
+			\draw[->,		 color=darkgray] (c1)			to[out=45, in=135]	(c3);%
+			\draw[->, dashed, color=darkgray] (c2)			to					(c3);%
+			\draw[->,		 color=darkgray] (c3)			to					(c4);%
+			\draw[->,		 color=darkgray] (c3)			to[out=45, in=135]	(c5);%
+			\draw[->, dashed, color=darkgray] (c4)			to					(c5);%
+			\draw[->,		 color=darkgray] (c5)			to					(c6);%
+			\draw[->, dashed, color=darkgray] (c7.north west) to[out=135, in=307.5] (c4);%
+			\draw[->, dashed, color=darkgray] (c8.north west) to[out=145, in=320]   (c4);%
+			\draw[->, dashed, color=darkgray] (c9.west)	   to[out=180, in=315]   (c2.south east);%
+		\end{tikzpicture}%
+	}
+	\caption[Graph of order of reading the chapters]{Graph of order of reading the chapters (hyperlinked titles)}
+	\label{fig:Graphoforderofreadingthechapters}%
+\end{figure}
+
+\subsection{Technologies and tools used} \label{subsection:Preface/Aboutthisthesis/Technologiesandtoolsused}
+During the work for this thesis, the following technologies and tools were used:
+\setlist{nolistsep} \begin{itemize}[noitemsep]
+	\item \gls{CentOS} and \gls{Ubuntu};
+	\item ArangoDB and temporarily Neo4j;
+	\item \gls{JavaScript}, \gls{Python}, \acrshort{AQL}, \gls{NodeJS}, \gls{React}, improperly \gls{TypeScript}, \Gls{bootstrap}, \gls{Express}, \gls{GraphQL}, \gls{Apollo}, \gls{Cytoscape.JS} and many more;
+	\item \gls{Visual Studio Code}, \gls{WebStorm}, \gls{PyCharm}, \gls{Postman}, \texttt{\gls{vim}} and \texttt{\gls{gedit}};
+	\item \texttt{\gls{git}}, \texttt{\gls{konsole}} and \gls{GitHub};
+	\item \gls{Evince} Document Viewer and \gls{Calibre};
+	\item \gls{Firefox} and \gls{Chromium} browsers;
+\end{itemize}
+\medskip
+
+During the writing of this document (and the presentation afterwards, the following technologies and tools were used:
+\setlist{nolistsep} \begin{itemize}[noitemsep]
+	\item Ubuntu;
+	\item \LaTeX, \gls{Overleaf} and Latex \gls{Beamer};
+	\item \texttt{\gls{vim}} and \texttt{\gls{gedit}};
+	\item \texttt{\gls{git}}, \texttt{\gls{konsole}} and \gls{GitHub};
+	\item \gls{Inkscape}, \gls{Gimp} and \gls{Spectacle};
+	\item \gls{Evince} Document Viewer and \gls{Calibre};
+	\item \gls{Firefox} and \gls{Chromium} browsers;
+\end{itemize}
+
+\subsection{Some statistics on this document} \label{subsection:Preface/Aboutthisthesis/Somestatisticsonthisdocument}
+This thesis is \pageref*{TotPages} pages long.
+In absolute terms the document is \ref*{TotPages} pages long, including frontmatter's roman numbered pages.
+
+\newcount\thetotalbibentriessumpagetotal
+\newcount\thetotalbibentriesnononline% number of non webpage references
+\newcount\thetotalbibentriesonline% number of online webpage references
+\newcount\bibentriesaveragepagetotal% average length of a non webpage bibliography reference
+\bibentriesaveragepagetotal=81% manual average from pagetotal and pages difference in bib file. For 106 pagetotals: average = 85. For 107 pages diffs without pagetotals: average = 19. Total average = 81.
+\thetotalbibentriesnononline=116
+\thetotalbibentriessumpagetotal=\numexpr \thetotalbibentriesnononline*\bibentriesaveragepagetotal\relax% calculate sum of totalpages as number of references * average length of a reference
+\thetotalbibentriesonline=\numexpr\thetotalbibentries-\thetotalbibentriesnononline\relax
+
+This document contains:
+\setlist{nolistsep} \begin{itemize}[noitemsep]
+	\item \totalfigures\ figures;
+	\item \totaltables\ tables;
+	\item \totallstlistings\ code listings;
+	\item \totaldefinitions\ definitions,
+		  \totalremarks\ remarks,
+		  \totaltheorems\ theorems,
+		  \totalproofs\ proofs,
+		  \totalcorollarys\ corollary,
+		  \totalformulas\ formulas and
+		  \totalequations\ mathematical expressions;
+		  \totaltodos\ todo notes.
+	\item 78 acronyms,
+		  34 nomenclature entries and
+		  58 glossary terms;
+	\item \totalparts\ parts,
+		  %\totalchapters\ chapters,
+		  6 chapters,
+		  \totalsections\ sections,
+		  \totalsubsections\ subsections and
+		  \totalsubsubsections\ subsubsections;
+	\item \thetotalbibentries\ bibliography references. Of these:
+		\setlist{nolistsep} \begin{itemize}[noitemsep]
+			\item \the\thetotalbibentriesnononline\ are books, in conference proceedings, scientific articles, tech reports, thesis documents and similar.
+			Total sum of the number of pages of these references is \the\thetotalbibentriessumpagetotal\ pages.
+			\item \the\thetotalbibentriesonline\ are online documentation webpages, blog posts, wiki pages and similar.
+			The total sum of pages varies according to the webpage-to-PDF exportation options.
+		\end{itemize}
+\end{itemize}
+
+\section{About the author} \label{section:Preface/Abouttheauthor}
+\subsection[whoami]{\texttt{whoami}} \label{subsection:Preface/Abouttheauthor/WhoamI}
+\myauthor, during the work for this thesis (\myyearofpublishing) is (was) a graduating student at \myinstitution\ in a \mycourse.
+
+The supervisor professor during the work process is (was) \mysupervisor. %The examiner professor is (was) \myexaminer.
+
+\subsection{Contacts} \label{subsection:Preface/Abouttheauthor/Getintouch}
+To get in touch with the author, write to \hyperlink{mailto:\myauthoremail}{\texttt{\myauthoremail}} or connect on \gls{LinkedIn} at \url{\myauthorlinkedin}.
+
+\newpage
+\thispagestyle{empty}

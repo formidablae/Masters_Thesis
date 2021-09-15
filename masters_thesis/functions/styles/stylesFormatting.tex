@@ -1,0 +1,88 @@
+\RedeclareSectionCommand[ % adjusting spacing with koma-script
+	%runin=false,
+	afterindent=false,
+	beforeskip=80pt,
+	afterskip=1.5\baselineskip
+]{chapter}
+\RedeclareSectionCommand[
+	%runin=false,
+	afterindent=false,
+	beforeskip=0.75\baselineskip,
+	afterskip=.5\baselineskip
+]{section}
+\RedeclareSectionCommand[
+	%runin=false,
+	afterindent=false,
+	beforeskip=.67\baselineskip,
+	afterskip=.33\baselineskip
+]{subsection}
+\RedeclareSectionCommand[
+	%runin=false,
+	afterindent=false,
+	beforeskip=.5\baselineskip,
+	afterskip=.25\baselineskip
+]{subsubsection}
+\RedeclareSectionCommand[
+	runin=true,
+	%afterindent=false,
+	beforeskip=.5\baselineskip,
+	afterskip=1em
+]{paragraph}
+\RedeclareSectionCommand[
+	runin=true,
+	%afterindent=false,
+	beforeskip=.5\baselineskip,
+	afterskip=1em
+]{subparagraph}
+
+\addtokomafont{part}{\fontsize{20}{25}\selectfont}
+\addtokomafont{chapter}{\fontsize{16}{20}\selectfont}
+\addtokomafont{section}{\fontsize{13.5}{16.9}\selectfont}
+\addtokomafont{subsection}{\fontsize{11.5}{14.4}\selectfont}
+\addtokomafont{subsubsection}{\fontsize{10}{12.5}\selectfont}
+\addtokomafont{paragraph}{\fontsize{9.25}{13.9}\selectfont}
+\addtokomafont{subparagraph}{\fontsize{9.25}{13.9}\selectfont}
+
+%\addtokomafont{footnote}{\fontsize{9pt}{10.5pt}\selectfont}% change footnote fontsize
+%\renewcommand{\tiny}{\fontsize{5}{6}\selectfont}
+\renewcommand{\tiny}{\fontsize{6.5}{7.8}\selectfont}
+\renewcommand{\scriptsize}{\fontsize{6.8}{8.2}\selectfont}
+\renewcommand{\footnotesize}{\fontsize{7.1}{8.5}\selectfont}
+\renewcommand{\small}{\fontsize{7.5}{9}\selectfont}
+\renewcommand{\normalsize}{\fontsize{8}{9.6}\selectfont}
+\renewcommand{\large}{\fontsize{8.7}{10.4}\selectfont}
+\renewcommand{\Large}{\fontsize{9.7}{11.64}\selectfont}
+\renewcommand{\LARGE}{\fontsize{11}{13.2}\selectfont}
+\renewcommand{\huge}{\fontsize{13}{15.6}\selectfont}
+\renewcommand{\Huge}{\fontsize{16}{20}\selectfont}
+
+\linespread{0.90} % Squeeze the inter-line spacing
+
+% Beware of enumerated and itemized lists. Instead, replace them with compact lists.
+%\usepackage{paralist}
+%\begin{compactitem}
+%	\item ...
+%\end{compactitem}
+%\begin{compactenum}
+%	\item ...
+%\end{compactenum}
+
+
+\setlength{\parindent}{0.4cm}% indentation of first line of paragraph
+\renewcommand{\baselinestretch}{1.4} % inter-line baseline stretch
+
+\setlist[enumerate]{itemsep=-1mm}% lsits enumerate item spacing
+\setlist[itemize]{itemsep=-1mm}% lsits itemize item spacing
+\marginparpush=0pt
+
+\setcounter{secnumdepth}{3} % till what depth the sectioning titles are numbered
+\setcounter{tocdepth}{3} % 0: only chapters; 1: only chap and sections; 2: chap, sect and suubsections; 3: chap, sect, suubsect and subsubsections; 4 chap, sect, suubsect, subsubsect and paragraphs
+
+\emergencystretch=1em% for Overfull \hbox warning in bibliography and other parts. It tolaretes less than 1em too wide line space
+
+% Footnotes
+\interfootnotelinepenalty=10000 %Prevents footnotes splitting across pages
+\counterwithin*{footnote}{chapter}% when to reset footnotes counter. Can be chapter, section etc
+%\renewcommand*\thefootnote{\textcolor{darkgreen}{[\arabic{footnote}]}}% footnotes with numbers
+%\renewcommand*\thefootnote{\textcolor{darkgreen}{\fnsymbol{footnote}}}% footnotes with symbols
+\renewcommand*{\thefootnote}{\textcolor{darkgreen}{(\alph{footnote})}}% footnotes with smallcase letters

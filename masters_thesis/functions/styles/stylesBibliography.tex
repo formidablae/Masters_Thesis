@@ -1,0 +1,203 @@
+\renewcommand*{\bibfont}{\fontsize{8}{8}\selectfont}% bibliography entries fontsize
+
+\newcounter{totalbibentries}% count total number of bibliography references
+\newcommand*{\listcounted}{}
+\makeatletter
+\AtDataInput{%
+	\xifinlist{\abx@field@entrykey}\listcounted
+		{}{%
+		\stepcounter{totalbibentries}%
+		\listxadd\listcounted{\abx@field@entrykey}}%
+}
+\makeatother
+
+% Command \citelink to cite the url of a bibliography entry. Usage \citelink[Name of link]{BiblioEntry04}
+\DeclareCiteCommand{\citelink}
+	{\boolfalse{citetracker}\boolfalse{pagetracker}\usebibmacro{prenote}}
+	{\iffieldundef{postnote}
+		{\href{\thefield{url}}{\printfield{title}}}
+		{\href{\thefield{url}}{\thefield{postnote}}}}
+	{\multicitedelim}
+	{}
+
+% Command \citebibentrynote to cite the note of a bibliography entry. Usage \citebibentrynote{BiblioEntry04}
+\DeclareCiteCommand{\citebibentrynote}
+	{\boolfalse{citetracker}\boolfalse{pagetracker}\usebibmacro{prenote}}
+	{\iffieldundef{postnote}
+		{\thefield{note}{\thefield{postnote}}}}
+	{\multicitedelim}
+	{}
+	
+% Command \citefirstlastauthor to cite the first and lastname of the author of a bibliography entry. Usage \citefirstlastauthor{BiblioEntry04}
+\newrobustcmd*{\citefirstlastauthor}{\AtNextCite{\DeclareNameAlias{labelname}{given-family}}\citeauthor}
+
+
+\DefineBibliographyStrings{english}{%
+	backrefpage = {Cited on page},%
+	backrefpages = {Cited on pages}%
+}%
+
+\renewbibmacro{pageref}{%
+	\newline%
+	%\noindent\colorbox{whitesmoke}{%
+	%	\parbox{1\linewidth}{%
+			\color{dkgray}{%
+				\iflistundef{pageref}{%
+					\printtext[%
+						%parens% add paranthesis around text
+					]{%
+						Not cited%
+					}%
+				}{%
+					\printtext[%
+						%parens% add paranthesis around text
+					]{%
+						\ifnumgreater{\value{pageref}}{1}{%
+							\bibstring{backrefpages}%
+						}{%
+							\bibstring{backrefpage}%
+						}%
+						\ % space
+						\printlist[pageref][-\value{listtotal}]{pageref}%
+					}%
+				}%
+			}%
+	%	}%
+	%}%
+	%\newline%
+	%\color{lightergray}{\rule[11pt]{\linewidth}{1pt}}%
+}%
+
+%\DeclareFieldFormat[article, book, inbook, incollection, inproceedings, misc, mastersthesis, online, phdthesis, techreport, thesis, unpublished]{title}{#1}% title formatting, no quotes
+
+%\DeclareFieldFormat[article, book, inbook, incollection, inproceedings, misc, mastersthesis, online, phdthesis, techreport, thesis, unpublished]{author}{\bibsentence\bibstring{Author:}\addnbspace#1}% title formatting, no quotes
+
+\renewcommand{\finalnamedelim}{\space\textnormal{\bibstring{and}}\space}% final author delimitor only 'and' not ', and'. In first line, 'and' remains smallcase
+
+\newcounter{mymaxcitenames}% how many author names to print
+\AtBeginDocument{%
+	\setcounter{mymaxcitenames}{\value{maxnames}}%
+}
+\renewbibmacro*{begentry}{% capital author names and year in parentheses
+	\printtext{%
+		\begingroup
+			\defcounter{maxnames}{\value{mymaxcitenames}}%
+			\textsc{\printnames{labelname}}%
+			\setunit{\printdelim{nameyeardelim}}%
+			\printfield[parens]{year}%
+		\endgroup
+	}%
+	\newline
+}
+
+\DeclareFieldFormat*{journaltitle}{\textnormal{#1}}% normal text journal
+\DeclareFieldFormat*{booktitle}{\textnormal{#1}}% normal text booktitle
+\DeclareFieldFormat*{title}{\textit{#1}}% italic title
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%	  SFCITE
+%%%%%%%%%%%%%%%%%%%%%%%%
+\ExecuteBibliographyOptions{citetracker=true,sorting=none}
+
+% Citation footnotes: use \footnoteA
+\DeclareNewFootnote{A}
+
+% Vanilla footnotes: use \footnoteB
+\DeclareNewFootnote{B}
+
+% Number of each bibliography entry in brackets
+\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{#1}}
+
+\makeatletter
+
+\newtoggle{cbx@togcite}
+
+% Citation number superscript in brackets
+\renewcommand\@makefntext[1]{%
+	\iftoggle{cbx@togcite}{% if citation (footnoteA)
+		% \faBookmarkO% bookmark icon
+		%\ % space
+		\hphantom{% an empty box
+			\vphantom{% an empty box
+				\normalfont[\@thefnmark]% needed to keep track of repeated citation
+			}{}% width and zero height of the argument
+		}{}% zero width and height of the argument
+		#1% argument
+	}{ % if vanilla footnote (footnoteB)
+		\normalfont\@thefnmark%
+		\ % space
+		#1%
+	}%
+	\global\togglefalse{cbx@togcite}%
+}
+
+%---------------------------------------------------------------
+% Mostly verbatim from Joseph Wright
+% http://www.texdev.net/2010/03/08/biblatex-numbered-citations-as-footnotes/
+
+\DeclareCiteCommand{\sfcite}[\cbx@superscript]{%
+	\usebibmacro{cite:init}%
+	\let\multicitedelim=\supercitedelim%
+	\iffieldundef{prenote}{}{%
+		\BibliographyWarning{Ignoring prenote argument}%
+	}%
+	\iffieldundef{postnote}{}{%
+		\BibliographyWarning{Ignoring postnote argument}
+	}%
+}{%
+	\usebibmacro{citeindex}%
+	\usebibmacro{sfcite}%
+	\usebibmacro{cite:comp}%
+}{}{%
+	\usebibmacro{cite:dump}%
+}%
+
+\newbibmacro*{sfcite}{%
+	\ifciteseen{%
+		\xappto\cbx@citehook{%
+			%\mkbibsuperscript{%
+			%	\ %
+			%	\citeauthor{\thefield{entrykey}}%
+			%	\ (% space
+			%	\citeyear{\thefield{entrykey}}%
+			%	)%
+			%}%
+		}%
+	}{%
+		\xappto\cbx@citehook{%
+			\global\toggletrue{cbx@togcite}%
+			%\mkbibsuperscript{%
+			%	\ % space
+			%	\citeauthor{\thefield{entrykey}}%
+			%	\ (% space
+			%	\citeyear{\thefield{entrykey}}%
+			%	)%
+			%}%
+			\noexpand\footnotetextA[\thefield{labelnumber}]{%
+				\textcolor{red}{\cite{\thefield{entrykey}}}%
+				\ % space
+				\fullcite{\thefield{entrykey}}%
+				\addperiod%
+			}%
+		}%
+	}%
+}%
+
+\newrobustcmd{\cbx@superscript}[1]{%
+	%\raise-0.25ex\hbox{\faBookmarkO}%
+	%\ % space
+	\mkbibsuperscript{% elevate to superscript
+		\textnormal{% make normal text, up, not italic in theorems, definitions etc.
+			\textcolor{red}{% make red color
+				\mkbibbrackets{% put inside square brackets
+					#1% the number of the citation
+				}%
+			}%
+		}%
+	}%
+	\cbx@citehook%
+	\global\let\cbx@citehook=\empty}
+
+\let\cbx@citehook=\empty
+
+\makeatother

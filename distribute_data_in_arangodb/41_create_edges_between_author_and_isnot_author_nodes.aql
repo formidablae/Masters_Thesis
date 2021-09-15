@@ -1,0 +1,23 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between author and isnot author nodes
+
+FOR auth1 IN author
+    FOR auth2 IN author
+        FILTER auth2.isnot != null AND auth2.isnot != [] AND IS_ARRAY(auth2.isnot) AND LENGTH(auth2.isnot) > 0 AND auth1.name IN auth2.isnot
+        INSERT { _from:            auth2._id,
+                _to:               auth1._id, 
+                label:             "author_is_not_author",
+                author2_name:       auth2.name,
+                author1_name:       auth1.name,
+                weight:            2 } INTO "author-author_isnot"
+
+FOR auth1 IN author
+    FOR auth2 IN author
+        FILTER auth2.isnot != null AND auth2.isnot != [] AND IS_ARRAY(auth2.isnot) AND LENGTH(auth2.isnot) > 0 AND auth1.name IN auth2.isnot
+        INSERT { _from:            auth1._id,
+                _to:               auth2._id, 
+                label:             "author_is_not_author_viceversa",
+                author2_name:       auth2.name,
+                author1_name:       auth1.name,
+                weight:            2 } INTO "author-author_isnot"

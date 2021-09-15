@@ -1,0 +1,52 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct url in publication nodes
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_STRING(pub.url)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_ARRAY(pub.url)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_OBJECT(pub.url)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_STRING(pub.url)
+    UPDATE pub WITH { url: [ { address: pub.url, label: "" } ] } IN publication
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_ARRAY(pub.url) AND LENGTH(pub.url) > 0
+    FOR el IN pub.url
+        FILTER IS_STRING(el)
+        LIMIT 50
+        RETURN pub
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_ARRAY(pub.url) AND LENGTH(pub.url) > 0
+    FOR el IN pub.url
+        FILTER IS_ARRAY(el)
+        LIMIT 50
+        RETURN pub
+
+FOR pub IN publication
+    FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_ARRAY(pub.url) AND LENGTH(pub.url) > 0
+    FOR el IN pub.url
+        FILTER IS_OBJECT(el)
+        LIMIT 50
+        RETURN pub
+
+LET attrs = UNIQUE(FLATTEN(
+    FOR pub IN publication
+        FILTER pub.url != null AND pub.url != "" AND pub.url != [] AND IS_ARRAY(pub.url) AND LENGTH(pub.url) > 0
+        FOR el IN pub.url
+            FILTER IS_OBJECT(el)
+            RETURN ATTRIBUTES(el)
+))
+RETURN attrs

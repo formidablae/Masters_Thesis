@@ -1,0 +1,18 @@
+\DeclareCaptionFormat{mytablecaptionformat}{%
+	\vspace*{-18pt}%
+	\hspace*{1pt}%
+	\fcolorbox{lightlightergray}{lightlightergray}{%
+		\parbox{1\linewidth-8pt}{%
+			\hspace{5pt}%
+			\protect\hyperref[Listoftables]{\footnotesize\faListUl}%
+			\ \ %
+			#1%
+			#2%
+			#3%
+		}%
+	}%
+	\vspace*{0pt}%
+}%
+
+\captionsetup[table]{format=mytablecaptionformat}
+\captionsetup[longtable]{format=mytablecaptionformat}

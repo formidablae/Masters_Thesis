@@ -1,0 +1,59 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create publisher nodes and simplify publisher in publications
+
+FOR pub IN publication
+    FILTER pub.publisher != null AND pub.publisher != "" AND pub.publisher != []
+    INSERT { key: pub["@key"], publisher_list: pub.publisher } INTO publisher_temp
+
+LET count_array_publishers = COUNT(
+    FOR pub IN publisher_temp
+        FILTER IS_ARRAY(pub.publisher_list)
+        RETURN 1
+)
+
+RETURN count_array_publishers
+
+FOR pub IN publisher_temp
+    FILTER IS_ARRAY(pub.publisher_list) AND LENGTH(pub.publisher_list) == 1
+    UPDATE pub WITH { publisher_name: pub.publisher_list[0]["#text"], publisher_url: pub.publisher_list[0]["@href"] } IN publisher_temp
+
+FOR pub IN publisher_temp
+    FILTER pub.publisher_name != null
+    UPDATE pub WITH { publisher_list: null } IN publisher_temp OPTIONS { keepNull: false }
+
+FOR pub IN publisher_temp
+    FILTER IS_STRING(pub.publisher_list)
+    UPDATE pub WITH { publisher_name: pub.publisher_list, publisher_url: "" } IN publisher_temp
+
+FOR pub IN publisher_temp
+    FILTER pub.publisher_name != null
+    UPDATE pub WITH { publisher_list: null } IN publisher_temp OPTIONS { keepNull: false }
+
+
+LET pubs = UNIQUE(
+    FOR pub IN publisher_temp
+        RETURN { n: pub.publisher_name, u: pub.publisher_url }
+)
+FOR p IN pubs
+    INSERT { name: p.n, url: p.u } INTO publisher
+
+
+FOR publica IN publication
+    FOR publish IN publisher_temp
+        FILTER publica["@key"] == publish.key
+        UPDATE publish WITH { publisher: publish.publisher_name } IN publication
+
+FOR pub IN publication
+    FILTER pub.publisher == null
+    UPDATE pub WITH { publisher: "" } IN publication
+
+FOR pub IN publication
+    FILTER pub.publisher == []
+    UPDATE pub WITH { publisher: "" } IN publication
+
+// manually remove the few duplicates, those without urls
+FOR pub1 IN publisher
+    FOR pub2 IN publisher
+        FILTER pub1.name == pub2.name AND pub1["_key"] != pub2["_key"]
+        RETURN { pub1, pub2 }

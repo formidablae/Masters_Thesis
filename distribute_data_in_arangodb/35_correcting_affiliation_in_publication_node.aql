@@ -1,0 +1,24 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct affiliation in publication nodes
+
+FOR pub IN publication
+    FILTER pub.affiliation != null AND pub.affiliation != "" AND pub.affiliation != [] AND IS_STRING(pub.affiliation)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.affiliation != null AND pub.affiliation != "" AND pub.affiliation != [] AND IS_ARRAY(pub.affiliation)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.affiliation != null AND pub.affiliation != "" AND pub.affiliation != [] AND IS_OBJECT(pub.affiliation)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    UPDATE pub WITH { affiliation: null } IN publication OPTIONS { keepNull: false }
+
+FOR aff IN affiliation_institution
+    UPDATE aff WITH { name: aff.value, value: null } IN affiliation_institution OPTIONS { keepNull: false }

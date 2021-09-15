@@ -1,0 +1,17 @@
+\DeclareCaptionFormat{myfigurecaptionformat}{%
+	\vspace*{-12pt}%
+	\hspace*{0pt}%
+	\fcolorbox{lightlightergray}{lightlightergray}{%
+		\parbox{1\linewidth-8pt}{%
+			\hspace{5pt}%
+			\protect\hyperref[Listoffigures]{\footnotesize\faListUl}%
+			\ \ %
+			#1%
+			#2%
+			#3%
+		}%
+	}%
+	\vspace*{6pt}%
+}%
+
+\captionsetup[figure]{format=myfigurecaptionformat}

@@ -1,0 +1,185 @@
+%\Urlmuskip=0mu plus 1mu\relax% to break long urls in bibliography lines
+\nocite{*}% cite in bibliography all uncited sources in the *.bib file.
+
+\defbibheading{bibliographytitle}[\bibname]{\chapter[#1]{\centering#1}}% title of bibliography
+\defbibheading{bibliographysectiontitle}{\section{#1}}% title of bibliography topics in sections
+\defbibheading{bibliographysubsectiontitle}{\subsection{#1}}% title of bibliography topics in subsections
+\defbibheading{bibliographysubsubsectiontitle}{\subsubsection{#1}}% title of bibliography topics in subsubsections
+
+\defbibnote{bibnotereferences}{\Large List of the consulted references.}
+\defbibnote{bibnotebooks}{\Large List of all books consulted.}
+\defbibnote{bibnotearticles}{\Large List of all scientific articles consulted.}
+\defbibnote{bibnotethesises}{\Large List of all thesises consulted.}
+\defbibnote{bibnotedocumentation}{\Large List of all documentation references consulted.}
+\defbibnote{bibnoteslides}{\Large List of all slides presentations consulted.}
+\defbibnote{bibnoteonline}{\Large List of all online references consulted.}
+
+\cleardoublepage \phantomsection
+\pagestyle{bibliofancy}%
+\addtocounter{chapter}{+1}
+\chapter[Bibliography]{\centering Bibliography}%
+%\addcontentsline{toc}{chapter}{Bibliography}
+\label{Backmatter:Bibliography}\label{\chaptername::\thechapter}
+%\printbibheading[heading=bibliographytitle]
+\vspace*{-1cm}
+\minitoc \mtcskip \minilof
+\vspace*{-1cm}
+%\section{Graph theory and algorithms related references}
+%\printbibliography[
+%	title={Books},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotebooks,
+%	keyword={graph theory and algorithms},
+%	keyword={book},
+%]
+%\printbibliography[
+%	title={Online},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnoteonline,
+%	keyword={graph theory and algorithms},
+%	keyword={online}
+%]
+\printbibliography[
+	title={Graph theory and algorithms related references},
+	heading=bibliographysectiontitle,
+	%prenote=bibnotereferences,
+	keyword={graph theory and algorithms},
+]
+
+%\section{Graph databases related references}
+%\printbibliography[
+%	title={Books},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotebooks,
+%	keyword={graph databases},
+%	keyword={book},
+%]
+%\printbibliography[
+%	title={Articles, in conference proceedings, reports},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotearticles,
+%	keyword={graph databases},
+%	keyword={article}
+%]
+%\printbibliography[
+%	title={Slides presentations},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnoteslides,
+%	keyword={graph databases},
+%	keyword={slides presentation}
+%]
+%\printbibliography[
+%	title={Online},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnoteslides,
+%	keyword={graph databases},
+%	keyword={online}
+%]
+\printbibliography[
+	title={Graph databases related references},
+	heading=bibliographysectiontitle,
+	%prenote=bibnotereferences,
+	keyword={graph databases},
+]
+
+%\section{Community Detection related references}
+%\printbibliography[
+%	title={Articles, in conference proceedings, reports},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotearticles,
+%	keyword={community detection},
+%	keyword={article}
+%]
+%\printbibliography[
+%	title={Thesis},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotethesises,
+%	keyword={community detection},
+%	keyword={thesis}
+%]
+%\printbibliography[
+%	title={Online},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotethesises,
+%	keyword={community detection},
+%	keyword={online}
+%]
+\printbibliography[
+	title={Community Detection related references},
+	heading=bibliographysectiontitle,
+	%prenote=bibnotereferences,
+	keyword={community detection},
+]
+
+\section{Technical documentation references}
+\printbibliography[
+	title={ArangoDB docs references},
+	heading=bibliographysubsectiontitle,
+	%prenote=bibnotedocumentation,
+	keyword={documentation},
+	keyword={arangodb}
+]
+\printbibliography[
+	title={Other GDBMSs docs references},
+	heading=bibliographysubsectiontitle,
+	%prenote=bibnotedocumentation,
+	keyword={documentation},
+	keyword={other gdbmss}
+]
+\printbibliography[
+	title={Non GDBMSs docs references},
+	heading=bibliographysubsectiontitle,
+	%prenote=bibnotedocumentation,
+	keyword={documentation},
+	keyword={other non gdbmss}
+]
+\printbibliography[
+	title={Web development docs references},
+	heading=bibliographysubsectiontitle,
+	%prenote=bibnotedocumentation,
+	keyword={documentation},
+	keyword={webdev}
+]
+\printbibliography[
+	title={Other documentation references},
+	heading=bibliographysubsectiontitle,
+	%prenote=bibnotedocumentation,
+	keyword={documentation},
+	keyword={other docs}
+]
+
+%\section{Other references}
+%\printbibliography[
+%	title={Books},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotebooks,
+%	keyword={other refs},
+%	keyword={book}
+%]
+%\printbibliography[
+%	title={Articles, in conference proceedings, reports},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnotearticles,
+%	keyword={other refs},
+%	keyword={article}
+%]
+%\printbibliography[
+%	title={Slides presentations},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnoteslides,
+%	keyword={other refs},
+%	keyword={slides presentation}
+%]
+%\printbibliography[
+%	title={Online},
+%	heading=bibliographysubsectiontitle,
+%	%prenote=bibnoteonline,
+%	keyword={other refs},
+%	keyword={online}
+%]
+\printbibliography[
+	title={Other references},
+	heading=bibliographysectiontitle,
+	%prenote=bibnotereferences,
+	keyword={other refs},
+]

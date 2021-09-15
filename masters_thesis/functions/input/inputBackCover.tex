@@ -1,0 +1,12 @@
+\cleardoublepage \phantomsection
+\checkoddpage \ifoddpage {} \else {
+	\csname @openrightfalse\endcsname \newpage \mbox{} \thispagestyle{empty} % if bibliography ends in even page number
+} \fi
+
+\csname @openrightfalse\endcsname \newpage \mbox{} \thispagestyle{empty}
+
+{
+	\chapter*{}\input{tex/Z05_Backcover.tex}%
+	\label{Backcover}%
+	\thispagestyle{empty}
+}

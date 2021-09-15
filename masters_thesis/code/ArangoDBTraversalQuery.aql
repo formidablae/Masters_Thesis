@@ -1,0 +1,11 @@
+[WITH vertexCollection1[, vertexCollection2[, ...vertexCollectionN]]]
+FOR vertex[, edge[, path]]
+	IN [min[..max]]
+	OUTBOUND | INBOUND | ANY startVertex
+	GRAPH graphName
+	[PRUNE pruneCondition]
+	[OPTIONS options]
+	// RETURN [...]
+	// UPDATE vertex WITH {...} IN vertexCollectionN
+	// REMOVE vertex IN vertexCollectionN
+	// INSERT newVertex INTO vertexCollectionN

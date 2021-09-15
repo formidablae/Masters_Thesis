@@ -1,0 +1,256 @@
+\documentclass[fontsize=8pt, DIV=6, twoside, openright, headings=small, english, a4paper]{scrbook}
+\usepackage{bookman}
+
+\input{functions/constants.tex}
+
+\title{\mydocumentfulltitle}
+\author{\myauthor}
+\date{\mydateofpublishing}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tipa}% use for IPA phonetic transcription symbols
+\usepackage{listings}
+\usepackage{xstring}% for \IfInteger and \IfDecimal
+\usepackage[page, part, chapter, section, subsection, subsubsection, figure, table, lstlisting, definition, remark, theorem, proof, corollary, formula, equation]{totalcount}% count total number of pages (last page, not pdf total), figures, tables, listings ...
+%\totalfigures gives total number of figures inserted
+%\totaltables gives total number of tables inserted
+
+\usepackage{totpages}% count absolute total number of pages
+%\ref{TotPages} gives absolute total number of pages in the pdf (as link to last page)
+%\ref*{TotPages} same as above but as string
+%\pageref{TotPages} gives relative total number of pages in the document (as link to last page)
+%\pageref*{TotPages} same as above but as string
+%\theTotPages\ gives current absolute pdf page number where it is placed in the document (as string)
+
+\usepackage[skip=0pt]{subcaption}% skip=0pt skip space between subcaption and environment
+\usepackage[english]{babel}
+\usepackage[autostyle]{csquotes}% inline (\enquote{some text}) or blocks (\blockquote{some text}) of quotations. For quotes in foreigh language use \foreignquote{language}{text of quote}
+
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}% for multipage long tables
+\usepackage{color}
+\usepackage[pdftex,dvipsnames,table]{xcolor} % load before todonotes package
+
+\usepackage{indentfirst}
+\usepackage{enumitem}
+\usepackage{chngcntr}% change the resetting of counter
+\input{functions/styles/stylesFormatting.tex}% fontsize, line spread, spacing
+
+\usepackage[%
+    backgroundcolor=goldenyellow,%
+    bordercolor=black,%
+    linecolor=goldenyellow,%
+    textcolor=black,%
+    textsize=small,% default textsize=normalsize
+    textwidth=64pt,%
+    %prependcaption,
+    colorinlistoftodos%
+]{todonotes} % load after xcolor package
+
+\usepackage{xargs}% Use more than one optional parameter in a new commands. Needed for todonotes
+\input{functions/styles/stylesTodo.tex}
+
+\usepackage{tikz}
+\usetikzlibrary{
+    calc,% for position calculations as ratios
+    positioning% for node relative positioning
+}
+
+\usepackage{epigraph} % for chapter page quotes
+\setlength{\epigraphrule}{0pt} % to remove the line/rule below the quote
+\renewcommand{\textflush}{flushepinormal} % justifying and hyphenation of epigraph
+\usepackage[
+    %font=itshape,%italic
+    begintext=\textquotedblleft,%text before the quotation
+    endtext=\textquotedblright,%text after the quotationusually some cited reference
+    indentfirst=false%no first line indentation
+]{quoting}% for quotations in text/inline with \begin{quoting}...\end{quoting}
+
+\usepackage{siunitx} % SI units
+\usepackage{amssymb} % Math symbols
+\usepackage{newtxtext}
+\usepackage{newtxmath} 
+\usepackage{amsmath} % Math symbols and equations
+\let\openbox\relax% solves error of amsthm defining again openbox
+\usepackage{amsthm}% to define new theorem styles with \newtheoremstyle{...
+\usepackage{thmtools} % Needed to show theorems in toc
+\usepackage{mathtools}
+%\usepackage{dsfont}
+\usepackage{adforn} % ornaments glyphs adforn font
+\usepackage{fontawesome5} % for fontawesome icons
+\usepackage{float} % load before hyperref
+\usepackage{ifthen}
+\usepackage{wallpaper}
+%\usepackage[hyphens]{url}% for long url breaks in lines. Load before hyperref
+\usepackage[bookmarks, colorlinks=true]{hyperref} % load before glossaries to make working links
+\usepackage{extramarks}
+\usepackage{emptypage} % will empty all blank pages created by \cleardoublepage
+
+% Use a specific font, Roboto
+\usepackage[%
+    sfdefault,%
+    %scaled=0.95,
+%    condensed% condensed
+]{roboto}%
+
+\usepackage[% Needed to show toc for chapter
+    tight% tight linespacing in minitoc
+]{minitoc}
+% \usepackage{tocloft} % Needed to save space between indexes in the toc, cancels blank pages between them
+
+\input{functions/styles/stylesMinitoc.tex}
+
+\usepackage[strict]{changepage} % check \checkoddpage \ifoddpage odd\else even\fi
+
+\usepackage{colophon}
+\usepackage{textcomp} % for copyleft symbol \textcopyleft. Comment if symbol is loaded from font package
+
+\input{functions/styles/stylesColors.tex}
+
+\sisetup{
+    inter-unit-product=\ensuremath{{}\cdot{}},
+    per-mode=symbol
+}
+
+\usepackage[
+    % intoc % show or hide from toc
+]{nomencl}
+\makenomenclature
+
+\input{functions/styles/stylesNomenclature.tex}
+
+\newcounter{savepage}
+
+\usepackage[toc, page, titletoc, title]{appendix}
+
+\usepackage[
+    acronym,
+    toc=false, % show, hide from toc. to disable also make \glstoctrue to \glstocfalse
+    shortcuts,
+    translate=babel,
+    section=section,% to print inside a chapter as section
+    nopostdot
+]{glossaries} % load after hyperref
+
+\usepackage{glossary-mcols} % glossary in columns
+\input{functions/styles/stylesGlossaryAcronyms.tex}
+\loadglsentries{tex/Z04_Glossary}
+\loadglsentries{tex/A05_Acronyms}
+
+\usepackage{graphicx}
+% \graphicspath{ {images/} }
+\usepackage{floatflt} % wrap text around figures
+\usepackage[
+    skip=0pt% skip space between caption and environment
+]{caption}
+%\setlength{\abovecaptionskip}{2pt plus 2pt minus 1pt} % caption space
+%\setlength{\abovecaptionskip}{2pt plus 2pt minus 1pt} % caption space
+\usepackage[
+    %showframe,
+    a4paper,
+    nomarginpar,
+    marginparsep=6pt,
+    marginparwidth=64pt, % for notes, annotations with todonotes
+    includehead,
+    includefoot,
+    headsep=6pt,
+    headheight=32pt,
+    footskip=18pt,
+    left=76pt,
+    right=76pt,
+    top=64pt,
+    bottom=82pt
+]{geometry} % geometry package with mag <> 1000, no truedimen and hyperref, hyperref should be loaded before geometry. Otherwise the resulted PDF size will become wrong.
+\usepackage{lipsum} % lorem ipsum dumy text generator.
+% Package has access to 150 paragraphs of “Lorem ipsum” dummy text. Usage:
+% \lipsum[2-4]` will print lorem ipsum paragraph 2 to 4.
+% \lipsum[1-1]` will only print lorem ipsum paragraph 1.
+
+\input{functions/styles/stylesFigures.tex}
+\input{functions/styles/stylesTables.tex}
+\input{functions/styles/stylesListings.tex}
+
+\usepackage{fancyhdr}
+\usepackage{cleveref}% for plural and uppercase, lowercase refs. For the moment not used... Planned to use with theorem, theorems, remark, remarks etc.
+\input{functions/styles/stylesHeaderBreadcrumb.tex}
+\input{functions/renamings.tex}
+\input{functions/styles/stylesTheoremsDefinitions.tex}
+
+\usepackage[
+    backend=biber,
+    style=numeric-comp,
+    sorting=none,
+    bibstyle=numeric,
+    %autocite=footnote,
+    backref,
+    block=space,% Insert additional horizontal space between blocks of an entry. Solves Overfull \hbox warning for not breaking long urls in lines
+    backrefstyle=none,
+    bibencoding=utf8,
+    isbn=true,
+    doi=true,
+    url=true,
+    eprint=true,
+    abbreviate=false,
+    maxnames=99, % Show all authors in citation footnotes and bibliography
+]{biblatex}
+
+\usepackage{manyfoot}% needed for footnote citation with sfcite
+\input{functions/styles/stylesBibliography.tex}
+
+\addbibresource{tex/Z03_Bibliography.bib}
+\setlength\bibitemsep{1.3\itemsep}% spacing between each reference in bibliography
+  
+\usepackage[export]{adjustbox}% for figure frame use
+%cfbox=lightestgray % color
+%    2pt % rule width
+%    0pt % rule separation
+%    0pt % margin
+%inside [] of \includegraphics[]{}
+%\usepackage{showframe}
+
+\usepackage[open, openlevel=0]{bookmark} % load after hyperref
+
+% pdf metadata
+\hypersetup{
+    colorlinks=true,
+    urlcolor=royalblue,
+    linkcolor=royalblue,
+    citecolor=red,
+    bookmarksopen=true,
+    pdfstartview={Fit},
+    pdffitwindow=true,
+    breaklinks=true,% to correctly break links
+    pdftitle={\mydocumentfulltitle\ (\myauthor)},
+    pdfauthor={\myauthor},
+    pdfsubject={\mydocumentfulltitle},
+    pdfcreator={\myauthor},
+    pdfproducer={\myauthor},
+    pdfkeywords={\mykeywords},
+}
+
+\usepackage[%
+    pagecolor={whitesmoke},%
+    nopagecolor={none}%
+]{pagecolor}%
+\color{darkergray} % text color
+\usepackage{afterpage} % Use \newpagecolor{none}\afterpage{\restorepagecolor} to reset to non the color of just the new page, after page restored to default pagecolor
+
+\begin{document}
+    \usetagform{equationwithname}% to change name of equation
+    \counterwithin{lstlisting}{chapter} % Make listing numbering by part, chapter or section
+    \frontmatter
+        \dominitoc % used for minitocs, toc of chapters
+        \input{functions/input/inputCover.tex}
+        \input{functions/input/inputIndexes.tex}
+    
+    \mainmatter
+        \setcounter{page}{3}
+        \input{functions/input/inputChapters.tex}
+    
+    \backmatter
+        \input{functions/input/inputGlossary.tex}
+        \input{functions/input/inputBibliography.tex}
+        \input{functions/input/inputBackCover.tex}
+\end{document}

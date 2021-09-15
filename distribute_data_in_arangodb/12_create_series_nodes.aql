@@ -1,0 +1,92 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create series nodes and simplify series in publications
+
+LET series_types = UNIQUE(
+    FOR pub IN publication
+        RETURN TYPENAME(pub.series)
+)
+RETURN series_types
+
+LET series_types = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.series)
+        FOR s IN pub.series
+            RETURN TYPENAME(s)
+)
+RETURN series_types
+
+LET series_attributes = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.series)
+        FOR s IN pub.series
+            FILTER IS_OBJECT(s)
+            RETURN ATTRIBUTES(s)
+)
+RETURN series_attributes
+
+FOR pub IN publication
+    FILTER pub.series != null AND pub.series != "" AND pub.series != []
+    INSERT { key: pub["@key"], series_list: pub.series } INTO series_temp
+
+LET count_array_series = COUNT(
+    FOR ser IN series_temp
+        FILTER IS_ARRAY(ser.series_list)
+        RETURN 1
+)
+RETURN count_array_series
+
+LET count_string_series = COUNT(
+    FOR ser IN series_temp
+        FILTER IS_STRING(ser.series_list)
+        RETURN 1
+)
+RETURN count_string_series
+
+LET series_array_length = UNIQUE(
+    FOR ser IN series_temp
+        FILTER IS_ARRAY(ser.series_list)
+        RETURN LENGTH(ser.series_list)
+)
+RETURN series_array_length
+
+FOR ser IN series_temp
+    FILTER IS_STRING(ser.series_list)
+    UPDATE ser WITH { series_name: ser.series_list, series_url: "" } IN series_temp
+
+FOR ser IN series_temp
+    FILTER ser.series_name != null
+    UPDATE ser WITH { series_list: null } IN series_temp OPTIONS { keepNull: false }
+
+FOR ser IN series_temp
+    FILTER ser.series_list != null
+    UPDATE ser WITH { series_name: ser.series_list[0]["#text"], series_url: ser.series_list[0]["@href"] } IN series_temp
+
+FOR ser IN series_temp
+    FILTER ser.series_list != null AND ser.series_name != null
+    UPDATE ser WITH { series_list: null } IN series_temp OPTIONS { keepNull: false }
+
+LET srs = UNIQUE(
+    FOR ser IN series_temp
+        RETURN { n: ser.series_name, u: ser.series_url }
+)
+FOR s IN srs
+    INSERT { name: s.n, url: s.u } INTO series
+
+FOR ser1 IN series
+    FOR ser2 IN series
+        FILTER ser1.name == ser2.name AND ser1["_key"] != ser2["_key"] AND ser1.url == ""
+        REMOVE ser1 IN series
+
+FOR ser1 IN series
+    FOR ser2 IN series
+        FILTER ser1.name == ser2.name AND ser1["_key"] != ser2["_key"]
+        RETURN { ser1, ser2 }
+
+FOR pub IN publication
+    UPDATE pub WITH { series: "" } IN publication
+
+FOR pub IN publication
+    FOR ser IN series_temp
+        FILTER pub["@key"] == ser.key
+        UPDATE pub WITH { series: ser.series_name } IN publication

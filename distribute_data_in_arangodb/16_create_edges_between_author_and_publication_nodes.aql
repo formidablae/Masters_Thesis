@@ -1,0 +1,59 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between author and publication nodes
+
+// FOR pub IN publication
+//     FOR a IN author
+//         FILTER LENGTH(pub.author) > 0
+//         FOR auth IN pub.author
+//             FILTER auth == a.name
+//             INSERT { _from:             a._id,
+//                      _to:               pub._id, 
+//                      label:             "publication_is_written_by_author",
+//                      author_name:       a.name,
+//                      publication_title: pub.title,
+//                      publication_year:  pub.year,
+//                      first_author:      pub.author[0] == null ? "" : pub.author[0],
+//                      weight:            10 } INTO "author-publication"
+
+
+FOR pub IN publication
+    FOR a IN author
+        FILTER LENGTH(pub.author) > 0 AND a.name IN pub.author
+        INSERT { _from:             a._id,
+                _to:               pub._id, 
+                label:             "publication_is_written_by_author",
+                author_name:       a.name,
+                publication_title: pub.title,
+                publication_year:  pub.year,
+                first_author:      pub.author[0] == null ? "" : pub.author[0],
+                weight:            10 } INTO "author-publication"
+
+FOR pub IN publication
+    UPDATE pub WITH { graph_name: pub.title } IN publication
+
+FOR aut IN author
+    UPDATE aut WITH { graph_name: aut.name } IN author
+
+FOR pub IN publication
+    FOR a IN author
+        FILTER LENGTH(pub.author) > 0 AND a.name IN pub.author
+        INSERT { _from:            pub._id,
+                _to:               a._id, 
+                label:             "author_has_written_publication",
+                author_name:       a.name,
+                publication_title: pub.title,
+                publication_year:  pub.year,
+                first_author:      pub.author[0] == null ? "" : pub.author[0],
+                weight:            10 } INTO "author-publication"
+
+// remove duplicate edges @coll: "author-publication"
+FOR e1 IN @@coll
+    FILTER e1.label == "author_has_written_publication"
+    FOR e2 IN @@coll
+        FILTER e2.label == "author_has_written_publication" AND e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

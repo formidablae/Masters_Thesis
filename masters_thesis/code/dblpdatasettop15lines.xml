@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE dblp SYSTEM "dblp-2019-11-22.dtd">
+<dblp>
+<article mdate="2017-06-08" key="dblpnote/error" publtype="informal">
+<title>(error)</title>
+</article><article mdate="2017-06-08" key="dblpnote/ellipsis" publtype="informal">
+<title>&#8230;</title>
+</article><article mdate="2017-06-08" key="dblpnote/neverpublished" publtype="informal">
+<title>(was never published)</title>
+</article><phdthesis mdate="2002-01-03" key="phd/Turpin92">
+<author>Russell Turpin</author>
+<title>Programming Data Structures in Logic.</title>
+<year>1992</year>
+<school>University of Texas, Austin</school>
+</phdthesis>

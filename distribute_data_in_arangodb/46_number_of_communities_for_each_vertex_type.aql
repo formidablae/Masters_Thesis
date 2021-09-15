@@ -1,0 +1,55 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to find number of communites detected for each vertex type.
+
+LET count_communities_affiliation_institution = COUNT(
+	FOR n IN affiliation_institution
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_author = COUNT(
+	FOR n IN author
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_editor = COUNT(
+	FOR n IN editor
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_journal = COUNT(
+	FOR n IN journal
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_publication = COUNT(
+	FOR n IN publication
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_publisher = COUNT(
+	FOR n IN publisher
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_school = COUNT(
+	FOR n IN school
+		RETURN DISTINCT n.community
+)
+
+LET count_communities_series = COUNT(
+	FOR n IN series
+		RETURN DISTINCT n.community
+)
+
+RETURN {
+	number_of_communities_affiliation_institution: count_communities_affiliation_institution,
+	number_of_communities_affiliation_author: count_communities_author,
+	number_of_communities_affiliation_editor: count_communities_editor,
+	number_of_communities_affiliation_journal: count_communities_journal,
+	number_of_communities_affiliation_publication: count_communities_publication,
+	number_of_communities_affiliation_publisher: count_communities_publisher,
+	number_of_communities_affiliation_school: count_communities_school,
+	number_of_communities_affiliation_series: count_communities_series
+}
+	

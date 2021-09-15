@@ -1,0 +1,41 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between journal and publication nodes
+
+FOR pub IN publication
+    FOR j IN journal
+        FILTER pub.journal != "" AND pub.journal == j.name
+        INSERT { _from:             pub._id,
+                 _to:               j._id, 
+                 label:             "publication_is_published_in_journal",
+                 journal_name:      j.name,
+                 publication_title: pub.title,
+                 publication_year:  pub.year,
+                 first_author:      pub.author[0] == null ? "" : pub.author[0],
+                 weight:            6 } INTO "journal-publication"
+
+FOR jou IN journal
+    UPDATE jou WITH { graph_name: jou.name } IN journal
+
+FOR pub IN publication
+    FOR j IN journal
+        FILTER pub.journal != "" AND pub.journal == j.name
+        INSERT { _from:             j._id,
+                 _to:               pub._id, 
+                 label:             "journal_where_was_published_publication",
+                 journal_name:      j.name,
+                 publication_title: pub.title,
+                 publication_year:  pub.year,
+                 first_author:      pub.author[0] == null ? "" : pub.author[0],
+                 weight:            6 } INTO "journal-publication"
+
+// remove duplicate edges @coll: "journal-publication"
+FOR e1 IN @@coll
+    FILTER e1.label == "journal_where_was_published_publication"
+    FOR e2 IN @@coll
+        FILTER e2.label == "journal_where_was_published_publication" AND e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

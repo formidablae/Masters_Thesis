@@ -1,0 +1,11 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to change name of an author in publications
+
+LET old_name = "Old Name"
+LET correct_name = "New Name"
+FOR pub IN publication
+    FILTER pub.author != [] AND old_name IN pub.author
+    LET auth_array = pub.author
+    LET pos = POSITION( auth_array, old_name, true )
+    UPDATE pub WITH { author: REPLACE_NTH(auth_array, pos, correct_name) } IN publication

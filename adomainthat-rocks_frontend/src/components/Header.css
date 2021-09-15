@@ -1,0 +1,34 @@
+.header {
+  height: 10vh;
+  width: 100vw;
+  background: rgb(33, 33, 33);
+  color: #FFFFFF;
+  display: table
+}
+
+.headerTitle {
+  font-size: 2.5rem;
+  height: 100%;
+  margin: 0;
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 20px;
+}
+
+@media (max-width: 992px) {
+  .headerTitle {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerTitle {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .headerTitle {
+    font-size: 1.5rem;
+  }
+}

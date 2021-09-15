@@ -1,0 +1,234 @@
+// AQL query to execute in arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to convert publication attributes to correct type
+
+// @mdate attribute is already correct type of ""
+// @key attribute is already correct type of ""
+// pub_type attribute is already correct type of ""
+
+// @publtype correction to type of ""
+// FOR pub IN publication
+//     FILTER pub["@publrtype"] != null
+//     UPDATE pub WITH { "@publrtype": null } IN publication OPTIONS { keepNull: false }
+
+FOR pub IN publication
+    FILTER pub["@publtype"] == null
+    UPDATE pub WITH { "@publtype": "" } IN publication
+
+// address correction to type of ""
+FOR pub IN publication
+    FILTER pub.address == null
+    UPDATE pub WITH { address: "" } IN publication
+
+// school correction to type of []
+FOR pub IN publication
+    FILTER pub.school != null AND IS_STRING(pub.school)
+    LET sch = [pub.school]
+    UPDATE pub WITH { school: sch } IN publication
+
+FOR pub IN publication
+    FILTER pub.school == null
+    UPDATE pub WITH { school: [] } IN publication
+
+// publnr correction to type of ""
+// FOR pub IN publication
+//     FILTER pub.publrnr != null
+//     UPDATE pub WITH { publrnr: null } IN publication OPTIONS { keepNull: false }
+
+FOR pub IN publication
+    FILTER pub.publnr == null
+    UPDATE pub WITH { publnr: "" } IN publication
+
+// year correction to type of ""
+FOR pub IN publication
+    FILTER pub.year == null
+    UPDATE pub WITH { year: "" } IN publication
+
+// journal correction to type of ""
+FOR pub IN publication
+    FILTER pub.journal == null
+    UPDATE pub WITH { journal: "" } IN publication
+
+// cdrom correction to type of []
+FOR pub IN publication
+    FILTER pub.cdrom != null AND IS_STRING(pub.cdrom)
+    LET cd = [pub.cdrom]
+    UPDATE pub WITH { cdrom: cd } IN publication
+
+FOR pub IN publication
+    FILTER pub.cdrom == null
+    UPDATE pub WITH { cdrom: [] } IN publication
+
+// ee correction to type of []
+FOR pub IN publication
+    FILTER pub.ee != null AND IS_STRING(pub.ee)
+    LET e = [pub.ee]
+    UPDATE pub WITH { ee: e } IN publication
+
+FOR pub IN publication
+    FILTER pub.ee == null
+    UPDATE pub WITH { ee: [] } IN publication
+
+// done executed
+FOR pub IN publication
+    FILTER pub.ee != null AND pub.ee != "" AND pub.ee != [] AND IS_ARRAY(pub.ee) AND LENGTH(pub.ee) == 1 AND IS_OBJECT(pub.ee[0])
+    UPDATE pub WITH { ee: [ { type: pub.ee[0]["@type"], value: pub.ee[0]["#text"] } ] } IN publication
+
+// done executed
+FOR pub IN publication
+    FILTER pub.ee != null AND pub.ee != "" AND pub.ee != [] AND IS_ARRAY(pub.ee) AND LENGTH(pub.ee) == 1 AND IS_STRING(pub.ee[0])
+    UPDATE pub WITH { ee: [ { type: "", value: pub.ee[0] } ] } IN publication
+
+// done executed
+FOR pub IN publication
+    FILTER pub.ee != null AND IS_ARRAY(pub.ee) AND LENGTH(pub.ee) > 1
+    LET string_ee = (
+        FOR el1 IN pub.ee
+            FILTER IS_STRING(el1)
+            RETURN { type: "", value: el1 }
+    )
+    LET object_ee = (
+        FOR el2 IN pub.ee
+            FILTER IS_OBJECT(el2) AND el2["#text"] != null
+            RETURN { type: el2["@type"], value: el2["#text"] }
+    )
+    
+    LET all_ee = UNION(string_ee, object_ee)
+    UPDATE pub WITH { ee: all_ee } IN publication
+
+// @cdate correction to type of ""
+FOR pub IN publication
+    FILTER pub["@cdate"] == null
+    UPDATE pub WITH { "@cdate": "" } IN publication
+
+// chapter correction to type of ""
+FOR pub IN publication
+    FILTER pub.chapter == null
+    UPDATE pub WITH { chapter: "" } IN publication
+
+// crossref correction to type of ""
+FOR pub IN publication
+    FILTER pub.crossref == null
+    UPDATE pub WITH { crossref: "" } IN publication
+
+// number correction to type of ""
+FOR pub IN publication
+    FILTER pub.number == null
+    UPDATE pub WITH { number: "" } IN publication
+
+// pages correction to type of []
+FOR pub IN publication
+    FILTER pub.pages != null AND IS_STRING(pub.pages)
+    LET pag = [pub.pages]
+    RETURN pub WITH { pages: pag } IN publication
+
+FOR pub IN publication
+    FILTER pub.pages == null
+    UPDATE pub WITH { pages: [] } IN publication
+
+// month correction to type of ""
+FOR pub IN publication
+    FILTER pub.month == null
+    UPDATE pub WITH { month: "" } IN publication
+
+// volume correction to type of ""
+FOR pub IN publication
+    FILTER pub.volume == null
+    UPDATE pub WITH { volume: "" } IN publication
+
+// booktitle correction to type of ""
+FOR pub IN publication
+    FILTER pub.booktitle == null
+    UPDATE pub WITH { booktitle: "" } IN publication
+
+
+
+
+
+
+
+
+
+
+
+
+// author correction to type of []
+FOR pub IN publication
+    FILTER pub.author != null AND LENGTH(pub.author) == 1 AND IS_OBJECT(pub.author[0]) AND pub.author[0]["#text"] != null
+    LET aut = pub.author[0]["#text"]
+    UPDATE pub WITH { author: [aut] } IN publication
+
+FOR pub IN publication
+    FILTER pub.author != null AND LENGTH(pub.author) > 1
+    LET string_author_and_position = (
+        FOR a1 IN pub.author
+            FILTER IS_STRING(a1)
+            LET pos1 = POSITION( pub.author, a1, true )
+            RETURN { author: a1, pos: pos1 }
+    )
+    LET object_author_and_position = (
+        FOR a2 IN pub.author
+            FILTER IS_OBJECT(a2) AND a2["#text"] != null
+            LET pos2 = POSITION( pub.author, a2, true )
+            RETURN { author: a2["#text"], pos: pos2 }
+    )
+    
+    LET merged_auth_pos = UNION(string_author_and_position, object_author_and_position)
+    
+    LET full_string_array = (
+        // Taking authors from index 0 and on, to preserve order, position
+        FOR v IN 0..(LENGTH(string_author_and_position) + LENGTH(object_author_and_position) - 1)
+            FOR merge_data IN merged_auth_pos
+                FILTER v == merge_data.pos
+                RETURN merge_data.author
+    )
+    UPDATE pub WITH { author: full_string_array } IN publication
+
+// note correction to type of [] create affiliation
+FOR pub IN publication
+    FILTER pub.note != null AND IS_OBJECT(pub.note)
+    LET n = [pub.note]
+    UPDATE pub WITH { note: n } IN publication
+
+// affiliation correction to type of []
+// cite correction to type of  [{}]
+// editor correction to type of []
+// isbn correction to type of [{}]
+FOR pub IN publication
+    FILTER pub.isbn == null
+    UPDATE pub WITH { isbn: [] } IN publication
+
+// series correction to type of [{}]
+FOR pub IN publication
+    FILTER pub.series == null
+    UPDATE pub WITH { series: [] } IN publication
+
+// publisher correction to type of [{}]
+// title correction to type of ""
+// FOR pub IN publication
+//     FILTER pub.title != null AND IS_OBJECT(pub.title)
+//     LET t = [pub.title]
+//     UPDATE pub WITH { title: t } IN publication
+//
+// FOR pub IN publication
+//     FILTER pub.title != null AND IS_STRING(pub.title)
+//     LET t = [pub.title]
+//     UPDATE pub WITH { title: t } IN publication
+//
+// FOR pub IN publication
+//     FILTER pub.title == null
+//     UPDATE pub WITH { title: [] } IN publication
+//
+// FOR pub IN publication
+//     FILTER LENGTH(pub.title) == 1 AND IS_STRING(pub.title[0]) AND pub.title[0] != ""
+//     UPDATE pub WITH { "title": pub.title[0], subtitle: "", titleaddon: "" } IN publication
+
+// url correction to type of [{}]
+FOR pub IN publication
+    FILTER pub.url != null AND IS_OBJECT(pub.url)
+    LET u = [pub.url]
+    UPDATE pub WITH { url: u } IN publication
+
+FOR pub IN publication
+    FILTER IS_ARRAY(pub.pages) AND LENGTH(pub.pages) > 0
+    UPDATE pub WITH { pages: pub.pages[0] } IN publication

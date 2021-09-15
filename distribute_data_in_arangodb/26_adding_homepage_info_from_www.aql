@@ -1,0 +1,875 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to add homepage info to authors from www type publications
+
+FOR pub IN publication
+    FILTER pub.pub_type == "www"
+       AND pub.title == "Home Page"
+       AND pub["@key"] != null
+       AND pub.author != []
+       AND pub.crossref == ""
+       AND (pub.url == null OR pub.url == "" OR pub.url == [] OR pub.url == {})
+       AND (pub.note == null OR pub.note == "" OR pub.note == [] OR pub.note == {})
+       AND pub["@publtype"] == ""
+       AND (pub.cite == null OR pub.cite == "" OR pub.cite == [] OR pub.cite == {})
+       AND pub.year == ""
+       AND pub.ee == []
+       AND pub.editor == []
+    INSERT pub INTO homepages_temp
+
+FOR pub IN publication
+    FILTER pub.pub_type == "www"
+       AND pub.title == "Home Page"
+       AND pub["@key"] != null
+       AND pub.author != []
+       AND pub.crossref == ""
+       AND (pub.url == null OR pub.url == "" OR pub.url == [] OR pub.url == {})
+       AND (pub.note == null OR pub.note == "" OR pub.note == [] OR pub.note == {})
+       AND pub["@publtype"] == ""
+       AND (pub.cite == null OR pub.cite == "" OR pub.cite == [] OR pub.cite == {})
+       AND pub.year == ""
+       AND pub.ee == []
+       AND pub.editor == []
+    REMOVE pub IN publication
+
+FOR el IN homepages_temp
+    FILTER el.crossref == "" OR el.crossref == []
+    UPDATE el WITH { crossref: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.address == "" OR el.address == []
+    UPDATE el WITH { address: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.school == "" OR el.school == []
+    UPDATE el WITH { school: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.year == "" OR el.year == []
+    UPDATE el WITH { year: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.cdrom == "" OR el.cdrom == []
+    UPDATE el WITH { cdrom: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el["@cdate"] == "" OR el["@cdate"] == []
+    UPDATE el WITH { "@cdate": null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.ee == "" OR el.ee == []
+    UPDATE el WITH { ee: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.chapter == "" OR el.chapter == []
+    UPDATE el WITH { chapter: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.number == "" OR el.number == []
+    UPDATE el WITH { number: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.journal == "" OR el.journal == []
+    UPDATE el WITH { journal: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.pages == "" OR el.pages == []
+    UPDATE el WITH { pages: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.month == "" OR el.month == []
+    UPDATE el WITH { month: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.volume == "" OR el.volume == []
+    UPDATE el WITH { volume: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.booktitle == "" OR el.booktitle == []
+    UPDATE el WITH { booktitle: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.url == "" OR el.url == []
+    UPDATE el WITH { url: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.publisher == "" OR el.publisher == []
+    UPDATE el WITH { publisher: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.note == "" OR el.note == []
+    UPDATE el WITH { note: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.cite == "" OR el.cite == []
+    UPDATE el WITH { cite: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.isbn == "" OR el.isbn == []
+    UPDATE el WITH { isbn: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el["@publtype"] == "" OR el["@publtype"] == []
+    UPDATE el WITH { "@publtype": null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.series == "" OR el.series == []
+    UPDATE el WITH { series: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.publnr == "" OR el.publnr == []
+    UPDATE el WITH { publnr: null } IN homepages_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_temp
+    FILTER el.editor == "" OR el.editor == []
+    UPDATE el WITH { editor: null } IN homepages_temp OPTIONS { keepNull: false }
+
+
+FOR auth IN homepages_temp
+    FILTER IS_ARRAY(auth.author) AND LENGTH(auth.author) == 1
+    UPDATE auth WITH { author: auth.author[0] } IN homepages_temp
+
+FOR a IN author
+    UPDATE a WITH { url: [] } IN author
+
+FOR auth IN homepages_temp
+    FILTER IS_STRING(auth.author)
+    FOR a IN author
+        FILTER a.name == auth.author
+        UPDATE a WITH { url: PUSH(a.url, { address: auth["@key"], label: auth.title } ) } IN author
+
+FOR auth IN homepages_temp
+    FILTER IS_STRING(auth.author)
+    FOR a IN author
+        FILTER a.name == auth.author
+        REMOVE auth IN homepages_temp
+
+// Counting appearances of first and second name in publications
+FOR auth IN homepages_temp
+    FILTER LENGTH(auth.author) == 2
+    LET first_name = COUNT(
+        FOR pub IN publication
+            FILTER auth.author[0] IN pub.author
+            RETURN 1
+    )
+    LET second_name = COUNT(
+        FOR pub IN publication
+            FILTER auth.author[1] IN pub.author
+            RETURN 1
+    )
+    LIMIT 200
+    RETURN { appearances_first_name: first_name, appearances_second_name: second_name }
+
+
+
+
+
+
+
+
+// Count entries with many names
+LET lengths = [1, 2, 3, 4, 5, 6, 7]
+LET lengths_count = (
+    FOR l IN lengths
+        LET counting = COUNT(
+            FOR el IN homepages_temp
+                FILTER LENGTH(el.author) == l
+                RETURN 1
+        )
+        RETURN { len: l, total: counting }
+)
+RETURN lengths_count
+
+// Choose longest name
+LET longest_other_names = UNIQUE(
+    FOR el IN homepages_temp
+        LET max_length = MAX(
+            FOR a IN el.author
+                RETURN LENGTH(a)
+        )
+        LET longest = (
+            FOR au IN el.author
+                FILTER LENGTH(au) == max_length
+                RETURN au
+        )
+        LET other = MINUS(el.author, [longest[0]])
+        RETURN { longest_name: longest[0], other_names: other }
+)
+FOR data IN longest_other_names
+    INSERT data IN longest_other_names_temp
+
+
+
+
+
+
+
+
+
+
+
+
+FOR pub IN publication
+    FILTER pub.pub_type == "www"
+    INSERT pub INTO homepages_bloat_temp
+
+FOR pub IN publication
+    FILTER pub.pub_type == "www"
+    REMOVE pub IN publication
+
+FOR el IN homepages_bloat_temp
+    FILTER el.crossref == "" OR el.crossref == []
+    UPDATE el WITH { crossref: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.address == "" OR el.address == []
+    UPDATE el WITH { address: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.school == "" OR el.school == []
+    UPDATE el WITH { school: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.year == "" OR el.year == []
+    UPDATE el WITH { year: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.cdrom == "" OR el.cdrom == []
+    UPDATE el WITH { cdrom: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el["@cdate"] == "" OR el["@cdate"] == []
+    UPDATE el WITH { "@cdate": null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.ee == "" OR el.ee == []
+    UPDATE el WITH { ee: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.chapter == "" OR el.chapter == []
+    UPDATE el WITH { chapter: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.number == "" OR el.number == []
+    UPDATE el WITH { number: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.journal == "" OR el.journal == []
+    UPDATE el WITH { journal: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.pages == "" OR el.pages == []
+    UPDATE el WITH { pages: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.month == "" OR el.month == []
+    UPDATE el WITH { month: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.volume == "" OR el.volume == []
+    UPDATE el WITH { volume: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.booktitle == "" OR el.booktitle == []
+    UPDATE el WITH { booktitle: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.url == "" OR el.url == []
+    UPDATE el WITH { url: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.publisher == "" OR el.publisher == []
+    UPDATE el WITH { publisher: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note == "" OR el.note == []
+    UPDATE el WITH { note: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.cite == "" OR el.cite == []
+    UPDATE el WITH { cite: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.isbn == "" OR el.isbn == []
+    UPDATE el WITH { isbn: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el["@publtype"] == "" OR el["@publtype"] == []
+    UPDATE el WITH { "@publtype": null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.series == "" OR el.series == []
+    UPDATE el WITH { series: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.publnr == "" OR el.publnr == []
+    UPDATE el WITH { publnr: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER el.editor == "" OR el.editor == []
+    UPDATE el WITH { editor: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+LET attrs = UNIQUE(
+    FOR el IN homepages_bloat_temp
+        RETURN ATTRIBUTES(el, true, true)
+)
+RETURN attrs
+
+FOR el IN homepages_bloat_temp
+    UPDATE el WITH { "@mdate": null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+
+LET attrs = UNIQUE(FLATTEN(
+    FOR el IN homepages_bloat_temp
+        RETURN ATTRIBUTES(el, true, true)
+))
+LET count_attrs = (
+    FOR a IN attrs
+        LET counting = COUNT(
+            FOR el IN homepages_bloat_temp
+                FILTER HAS(el, a)
+                RETURN 1
+        )
+        RETURN { attribut: a, total: counting }
+)
+RETURN count_attrs
+
+FOR el IN homepages_bloat_temp
+    FILTER el.editor != null
+    RETURN el
+
+// manual insertion
+
+FOR el IN homepages_bloat_temp
+    FILTER el.editor != null
+    REMOVE el IN homepages_bloat_temp
+
+FOR el IN homepages_bloat_temp
+    FILTER el.year != null
+    RETURN el
+
+FOR el IN homepages_bloat_temp
+    FILTER el.year != null
+    REMOVE el IN homepages_bloat_temp
+
+
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_ARRAY(el.note)
+    LET affiliation_data_bool = UNIQUE(
+        FOR nt IN el.note
+            RETURN IS_OBJECT(nt) AND nt["@type"] != null AND nt["@type"] == "affiliation"
+    )
+    FILTER true IN affiliation_data_bool
+    INSERT el IN author_affiliation_data
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_ARRAY(el.note)
+    LET affiliation_data_bool = UNIQUE(
+        FOR nt IN el.note
+            RETURN IS_OBJECT(nt) AND nt["@type"] != null AND nt["@type"] == "affiliation"
+    )
+    FILTER true IN affiliation_data_bool
+    REMOVE el IN homepages_bloat_temp
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_ARRAY(el.note)
+    LET award_data_bool = UNIQUE(
+        FOR nt IN el.note
+            RETURN IS_OBJECT(nt) AND nt["@type"] != null AND nt["@type"] == "award"
+    )
+    FILTER true IN award_data_bool
+    INSERT el IN author_award_data
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_ARRAY(el.note)
+    LET award_data_bool = UNIQUE(
+        FOR nt IN el.note
+            RETURN IS_OBJECT(nt) AND nt["@type"] != null AND nt["@type"] == "award"
+    )
+    FILTER true IN award_data_bool
+    REMOVE el IN homepages_bloat_temp
+
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_ARRAY(el.note)
+    LET note_object = (
+        FOR nt IN el.note
+            FILTER IS_OBJECT(nt) AND (nt["@type"] == null OR nt["@type"] != "uname")
+            RETURN nt
+    )
+    LET note_string = (
+        FOR ntstr IN el.note
+            FILTER IS_STRING(ntstr)
+            RETURN ntstr
+    )
+    UPDATE el WITH { note: UNION(note_object, note_string) } IN homepages_bloat_temp
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note == []
+    UPDATE el WITH { note: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR el IN homepages_bloat_temp
+    FILTER IS_STRING(el.url)
+    UPDATE el WITH { url: [el.url] } IN homepages_bloat_temp
+
+FOR auth IN homepages_bloat_temp
+    FILTER auth.note != null AND auth.crossref == null
+    FOR a IN author
+        FILTER a.name == auth.author[0]
+        UPDATE a WITH { url: PUSH(a.url, { address: auth["@key"], label: auth.title } ), note: auth.note } IN author
+
+FOR auth IN homepages_bloat_temp
+    FILTER auth.note != null AND auth.crossref == null
+    FOR a IN author
+        FILTER a.name == auth.author[0] AND auth.url != null
+        LET new_urls = (
+            FOR u IN auth.url
+                RETURN { address: u, label: "" }
+        )
+        UPDATE a WITH { url: PUSH(a.url, new_urls[0] ) } IN author
+
+FOR auth IN homepages_bloat_temp
+    FILTER auth.note != null AND auth.crossref == null
+    FOR a IN author
+        FILTER a.name == auth.author[0] AND auth.url != null
+        REMOVE auth IN homepages_bloat_temp
+
+
+FOR auth IN homepages_bloat_temp
+    FILTER auth.note != null AND IS_STRING(auth.note)
+    FOR a IN author
+        FILTER a.name == auth.author[0]
+        UPDATE a WITH { url: PUSH(a.url, { address: auth["@key"], label: auth.title } ), note: [auth.note] } IN author
+
+
+FOR auth IN homepages_bloat_temp
+    FILTER auth.note != null AND IS_STRING(auth.note)
+    FOR a IN author
+        FILTER a.name == auth.author[0]
+        REMOVE auth IN homepages_bloat_temp
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_OBJECT(el.note[0])
+    FOR a IN author
+        FILTER a.name == el.author[0]
+        UPDATE a WITH { url: PUSH(a.url, { address: el["@key"], label: el.title } ), isnot: [ el.note[0]["#text"] ] } IN author
+
+FOR el IN homepages_bloat_temp
+    FILTER el.note != null AND IS_OBJECT(el.note[0])
+    FOR a IN author
+        FILTER a.name == el.author[0]
+        REMOVE el IN homepages_bloat_temp
+
+// transforming multiple names into longest as main and the rest into other names in homepages_temp
+FOR el IN homepages_temp
+    LET longest_other_names = UNIQUE(
+        LET max_length = MAX(
+            FOR a IN el.author
+                RETURN LENGTH(a)
+        )
+        LET longest = (
+            FOR au IN el.author
+                FILTER LENGTH(au) == max_length
+                RETURN au
+        )
+        LET other = MINUS(el.author, [longest[0]])
+        RETURN { longest_name: longest[0], other_names: other }
+    )
+    UPDATE el WITH { author: longest_other_names[0].longest_name, other_names: longest_other_names[0].other_names } IN homepages_temp
+
+// doing the same for the authors in author_affiliation_data
+FOR el IN author_affiliation_data
+    LET longest_other_names = UNIQUE(
+        LET max_length = MAX(
+            FOR a IN el.author
+                RETURN LENGTH(a)
+        )
+        LET longest = (
+            FOR au IN el.author
+                FILTER LENGTH(au) == max_length
+                RETURN au
+        )
+        LET other = MINUS(el.author, [longest[0]])
+        RETURN { longest_name: longest[0], other_names: other }
+    )
+    UPDATE el WITH { author: longest_other_names[0].longest_name, other_names: longest_other_names[0].other_names } IN author_affiliation_data
+
+FOR el IN author_affiliation_data
+    FILTER IS_STRING(el.author)
+    UPDATE el WITH { author: [el.author] } IN author_affiliation_data
+
+// doing the same for the authors in author_award_data
+FOR el IN author_award_data
+    LET longest_other_names = UNIQUE(
+        LET max_length = MAX(
+            FOR a IN el.author
+                RETURN LENGTH(a)
+        )
+        LET longest = (
+            FOR au IN el.author
+                FILTER LENGTH(au) == max_length
+                RETURN au
+        )
+        LET other = MINUS(el.author, [longest[0]])
+        RETURN { longest_name: longest[0], other_names: other }
+    )
+    UPDATE el WITH { author: longest_other_names[0].longest_name, other_names: longest_other_names[0].other_names } IN author_award_data
+
+FOR el IN author_award_data
+    FILTER IS_STRING(el.author)
+    UPDATE el WITH { author: [el.author] } IN author_award_data
+
+
+// doing the same for the authors in homepages_bloat_temp
+FOR el IN homepages_bloat_temp
+    FILTER IS_STRING(el.author)
+    UPDATE el WITH { author: [el.author] } IN homepages_bloat_temp
+
+FOR el IN homepages_bloat_temp
+    LET longest_other_names = UNIQUE(
+        LET max_length = MAX(
+            FOR a IN el.author
+                RETURN LENGTH(a)
+        )
+        LET longest = (
+            FOR au IN el.author
+                FILTER LENGTH(au) == max_length
+                RETURN au
+        )
+        LET other = MINUS(el.author, [longest[0]])
+        RETURN { longest_name: longest[0], other_names: other }
+    )
+    UPDATE el WITH { author: longest_other_names[0].longest_name, other_names: longest_other_names[0].other_names } IN homepages_bloat_temp
+
+
+
+
+
+// correcting names in publications using names from author_affiliation_data
+// LET name_corrections_in_author_affiliation_data = (
+//     FOR el IN author_affiliation_data
+//         FILTER el.other_names != null AND IS_ARRAY(el.other_names) AND LENGTH(el.other_names) > 0
+//         FOR name IN el.other_names
+//             // LIMIT 4
+//             RETURN { is_now: name, will_become: el.author[0] }
+// )
+// FOR corrections IN name_corrections_in_author_affiliation_data
+//     LET old_name = corrections.is_now
+//     LET correct_name = corrections.will_become
+//     FOR pub IN publication
+//         FILTER pub.author != [] AND old_name IN pub.author
+//         LET auth_array = pub.author
+//         LET pos = POSITION( auth_array, old_name, true )
+//         UPDATE pub WITH { author: REPLACE_NTH(auth_array, pos, correct_name) } IN publication
+//         // RETURN { old_data: OLD, new_data: NEW }
+// 
+// // correcting names in publications using names from author_award_data
+// LET name_corrections_in_author_award_data = (
+//     FOR el IN author_award_data
+//         FILTER el.other_names != null AND IS_ARRAY(el.other_names) AND LENGTH(el.other_names) > 0
+//         FOR name IN el.other_names
+//             // LIMIT 4
+//             RETURN { is_now: name, will_become: el.author[0] }
+// )
+// FOR corrections IN name_corrections_in_author_award_data
+//     LET old_name = corrections.is_now
+//     LET correct_name = corrections.will_become
+//     FOR pub IN publication
+//         FILTER pub.author != [] AND old_name IN pub.author
+//         LET auth_array = pub.author
+//         LET pos = POSITION( auth_array, old_name, true )
+//         UPDATE pub WITH { author: REPLACE_NTH(auth_array, pos, correct_name) } IN publication
+//         // RETURN { old_data: OLD, new_data: NEW }
+// 
+// // correcting names in publications using names from homepages_bloat_temp
+// LET name_corrections_in_homepages_bloat_temp = (
+//     FOR el IN homepages_bloat_temp
+//         FILTER el.other_names != null AND IS_ARRAY(el.other_names) AND LENGTH(el.other_names) > 0
+//         FOR name IN el.other_names
+//             // LIMIT 4
+//             RETURN { is_now: name, will_become: el.author[0] }
+// )
+// FOR corrections IN name_corrections_in_homepages_bloat_temp
+//     LET old_name = corrections.is_now
+//     LET correct_name = corrections.will_become
+//     FOR pub IN publication
+//         FILTER pub.author != [] AND old_name IN pub.author
+//         LET auth_array = pub.author
+//         LET pos = POSITION( auth_array, old_name, true )
+//         UPDATE pub WITH { author: REPLACE_NTH(auth_array, pos, correct_name) } IN publication
+//         // RETURN { old_data: OLD, new_data: NEW }
+// 
+// // correcting names in publications using names from homepages_temp
+// LET name_corrections_in_homepages_temp = (
+//     FOR el IN homepages_temp
+//         FILTER el.other_names != null AND IS_ARRAY(el.other_names) AND LENGTH(el.other_names) > 0
+//         FOR name IN el.other_names
+//             // LIMIT 4
+//             RETURN { is_now: name, will_become: el.author[0] }
+// )
+// FOR corrections IN name_corrections_in_homepages_temp
+//     LET old_name = corrections.is_now
+//     LET correct_name = corrections.will_become
+//     FOR pub IN publication
+//         FILTER pub.author != [] AND old_name IN pub.author
+//         LET auth_array = pub.author
+//         LET pos = POSITION( auth_array, old_name, true )
+//         UPDATE pub WITH { author: REPLACE_NTH(auth_array, pos, correct_name) } IN publication
+//         // RETURN { old_data: OLD, new_data: NEW }
+
+
+
+
+FOR el IN homepages_bloat_temp
+    FILTER el.author != null AND IS_STRING(el.author)
+    UPDATE el WITH { author: [el.author] } IN homepages_bloat_temp
+
+FOR el IN homepages_bloat_temp
+    FILTER el.author == null
+    UPDATE el WITH { author: [] } IN homepages_bloat_temp
+FOR el IN homepages_temp
+    FILTER el.author != null AND IS_STRING(el.author)
+    UPDATE el WITH { author: [el.author] } IN homepages_temp
+
+
+
+LET name_corrections_in_author_affiliation_data = (
+    FOR el1 IN author_affiliation_data
+        FILTER el1.other_names != null AND IS_ARRAY(el1.other_names) AND LENGTH(el1.other_names) > 0
+        FOR name1 IN el1.other_names
+            // LIMIT 4
+            RETURN { is_now: name1, will_become: el1.author[0] }
+)
+LET name_corrections_in_author_award_data = (
+    FOR el2 IN author_award_data
+        FILTER el2.other_names != null AND IS_ARRAY(el2.other_names) AND LENGTH(el2.other_names) > 0
+        FOR name2 IN el2.other_names
+            // LIMIT 4
+            RETURN { is_now: name2, will_become: el2.author[0] }
+)
+LET name_corrections_in_homepages_bloat_temp = (
+    FOR el3 IN homepages_bloat_temp
+        FILTER el3.other_names != null AND IS_ARRAY(el3.other_names) AND LENGTH(el3.other_names) > 0
+        FOR name3 IN el3.other_names
+            // LIMIT 4
+            RETURN { is_now: name3, will_become: el3.author[0] }
+)
+LET name_corrections_in_homepages_temp = (
+    FOR el4 IN homepages_temp
+        FILTER el4.other_names != null AND IS_ARRAY(el4.other_names) AND LENGTH(el4.other_names) > 0
+        FOR name4 IN el4.other_names
+            // LIMIT 4
+            RETURN { is_now: name4, will_become: el4.author[0] }
+)
+LET unified_corrections = UNIQUE(UNION(
+    name_corrections_in_author_affiliation_data,
+    name_corrections_in_author_award_data,
+    name_corrections_in_homepages_bloat_temp,
+    name_corrections_in_homepages_temp))
+// RETURN unified_corrections
+FOR corrections IN unified_corrections
+    INSERT corrections INTO all_name_corrections
+
+
+// correcting names in publications using names from all_name_corrections
+FOR corrections IN all_name_corrections
+    LET old_name = corrections.is_now
+    LET correct_name = corrections.will_become
+    FOR pub IN publication
+        FILTER pub.author != [] AND old_name IN pub.author
+        LET auth_array = pub.author
+        LET pos = POSITION( auth_array, old_name, true )
+        UPDATE pub WITH { author: REPLACE_NTH(auth_array, pos, correct_name) } IN publication
+        // RETURN { old_data: OLD, new_data: NEW }
+
+FOR a IN author_affiliation_data
+    UPDATE a WITH { other_names: null } IN author_affiliation_data OPTIONS { keepNull: false }
+
+FOR a IN author_award_data
+    UPDATE a WITH { other_names: null } IN author_award_data OPTIONS { keepNull: false }
+
+FOR a IN homepages_bloat_temp
+    UPDATE a WITH { other_names: null } IN homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR a IN homepages_temp
+    UPDATE a WITH { other_names: null } IN homepages_temp OPTIONS { keepNull: false }
+
+
+
+
+
+FOR el IN author_affiliation_data
+    FILTER IS_STRING(el.url)
+    UPDATE el WITH { url: [ { address: el.url, label: "" } ] } IN author_affiliation_data
+
+FOR el IN author_affiliation_data
+    FILTER IS_ARRAY(el.url) AND LENGTH(el.url) == 1 AND IS_STRING(el.url[0])
+    UPDATE el WITH { url: [ { address: el.url[0], label: "" } ] } IN author_affiliation_data
+
+FOR el IN author_affiliation_data
+    FILTER IS_ARRAY(el.url) AND LENGTH(el.url) == 1 AND IS_STRING(el.url[0])
+    UPDATE el WITH { url: [ { address: el.url[0], label: "" } ] } IN author_affiliation_data
+
+FOR el IN author_affiliation_data
+    FILTER IS_ARRAY(el.url) AND LENGTH(el.url) > 1
+    LET count_not_strings = COUNT(
+        FOR u IN el.url
+            FILTER NOT IS_STRING(u)
+            RETURN 1
+    )
+    FILTER IS_ARRAY(el.url) AND LENGTH(el.url) > 1 AND count_not_strings == 0
+    LET urls_to_add = (
+        FOR the_url IN el.url
+            RETURN { address: the_url, label: "" }
+    )
+    UPDATE el WITH { url: urls_to_add } IN author_affiliation_data
+
+
+
+
+FOR inp IN homepages_temp
+    FOR a IN author
+        FILTER inp.author != null
+           AND IS_ARRAY(inp.author)
+           AND LENGTH(inp.author) == 1
+           AND inp.author[0] == a.name
+           AND inp["@key"] != null AND inp["@key"] != ""
+           AND inp.pub_type == "www"
+           AND inp.title == "Home Page"
+           AND ( a.url == null OR (IS_ARRAY(a.url) AND LENGTH(a.url) == 0))
+        UPDATE a WITH { "url": [ { "address": inp["@key"], "label": "Home Page" } ] } IN author
+
+LET to_delete = UNIQUE(FLATTEN(
+    FOR inp IN homepages_temp
+        FOR a IN author
+            FILTER inp.author != null
+               AND IS_ARRAY(inp.author)
+               AND LENGTH(inp.author) == 1
+               AND inp.author[0] == a.name
+               AND inp["@key"] != null AND inp["@key"] != ""
+               AND inp.pub_type == "www"
+               AND inp.title == "Home Page"
+               AND ( a.url == null OR (IS_ARRAY(a.url) AND LENGTH(a.url) == 1))
+            RETURN inp["_key"]
+))
+FOR d IN to_delete
+    REMOVE { _key: d } IN homepages_temp
+
+FOR pub IN publication_bloat_temp
+    FILTER pub.url != null AND IS_ARRAY(pub.url) AND LENGTH(pub.ee) > 1
+    LET string_ee = (
+        FOR el1 IN pub.ee
+            FILTER IS_STRING(el1)
+            RETURN { type: "", value: el1 }
+    )
+    LET object_ee = (
+        FOR el2 IN pub.ee
+            FILTER IS_OBJECT(el2) AND el2["#text"] != null
+            RETURN { type: el2["@type"], value: el2["#text"] }
+    )
+    
+    LET all_ee = UNION(string_ee, object_ee)
+    UPDATE pub WITH { ee: all_ee } IN publication
+
+
+
+
+FOR pub IN homepages_bloat_temp
+    FILTER pub.url != null AND pub.url != [] AND LENGTH(pub.url) > 0
+    LET string_url = (
+        FOR el1 IN pub.url
+            FILTER IS_STRING(el1)
+            RETURN { label: "", address: el1 }
+    )
+    LET object_url = (
+        FOR el2 IN pub.url
+            FILTER IS_OBJECT(el2) AND el2["#text"] != null
+            RETURN { label: el2["@type"], address: el2["#text"] }
+    )
+    LET all_url = UNION(string_url, object_url)
+    INSERT { author: pub.author, url: all_url } INTO new_urls_for_authors
+
+FOR a1 IN new_urls_for_authors
+    FOR a2 IN author
+        FILTER a1.author[0] == a2.name
+        LET a1_urls = a1.url
+        LET a2_urls = a2.url == null ? [] : a2.url
+        FILTER a1_urls != a2_urls
+        LET all_url = UNION(a1_urls, a2_urls)
+        UPDATE a2 WITH { url: all_url } IN author
+
+FOR pub IN homepages_bloat_temp
+    FILTER pub.url != null AND pub.url != [] AND LENGTH(pub.url) > 0
+    UPDATE pub WITH { url: null } in homepages_bloat_temp OPTIONS { keepNull: false }
+
+FOR a1 IN new_urls_for_authors
+    FOR a2 IN author
+        FILTER a1.author[0] == a2.name
+        LET a1_urls = a1.url
+        LET a2_urls = a2.url == null ? [] : a2.url
+        FILTER a1_urls != a2_urls
+        LET all_url = UNION(a1_urls, a2_urls)
+        UPDATE a2 WITH { url: all_url } IN author
+
+FOR pub IN homepages_bloat_temp
+    FOR a IN author
+        FILTER pub["kind"] != null AND pub.author[0] == a.name
+        LET pub_urls = [ { "label": pub.title, "address": pub["@key"] } ]
+        LET a_urls = a.url == null ? [] : a.url
+        FILTER pub_urls != a_urls
+        LET all_url = UNION(pub_urls, a_urls)
+        UPDATE a WITH { url: all_url, kind: "group" } IN author
+
+FOR pub IN homepages_bloat_temp
+    FILTER pub["kind"] != null
+    REMOVE pub IN homepages_bloat_temp
+
+FOR pub IN homepages_bloat_temp
+    FOR a IN author
+        FILTER pub.author[0] == a.name
+        LET pub_urls = [ { "label": pub.title, "address": pub["@key"] } ]
+        LET a_urls = a.url == null ? [] : a.url
+        FILTER pub_urls != a_urls
+        LET all_url = UNION(pub_urls, a_urls)
+        UPDATE a WITH { url: all_url } IN author
+
+FOR aff IN author_affiliation_data
+    LET aff_urls = aff.url  == null ? [] : aff.url
+    LET aff_homepage = [ { address: aff["@key"], label: (aff.title == null ? "" : aff.title) } ]
+    FOR a IN author
+        FILTER aff.author[0] == a.name
+        LET a_urls = (a.url == null ? [] : a.url)
+        LET all_url = FLATTEN(UNION(aff_urls, aff_homepage, a_urls))
+        UPDATE a WITH { url: all_url,
+                       kind: ((aff["@publtype"] != null AND aff["@publtype"] == "group") ? "group" : null) } IN author OPTIONS { keepNull: false }
+
+FOR aff IN author_award_data
+    LET aff_urls = aff.url  == null ? [] : aff.url
+    LET aff_homepage = [ { address: aff["@key"], label: (aff.title == null ? "" : aff.title) } ]
+    FOR a IN author
+        FILTER aff.author[0] == a.name
+        LET a_urls = (a.url == null ? [] : a.url)
+        LET all_url = FLATTEN(UNION(aff_urls, aff_homepage, a_urls))
+        UPDATE a WITH { url: all_url } IN author
+
+FOR a IN author
+    FILTER a.url != null AND a.url != [] AND LENGTH(a.url) > 0
+    LET string_url = (
+        FOR u IN a.url
+            FILTER IS_STRING(u)
+            RETURN { address: u, label: "" }
+    )
+    LET object_url_bad_format = (
+        FOR u IN a.url
+            FILTER IS_OBJECT(u) AND u.address == null
+            RETURN { address: u["#text"], label: (u["@type"] == null ? "" : u["@label"]) }
+    )
+    LET object_url_good_format = (
+        FOR u IN a.url
+            FILTER IS_OBJECT(u) AND u.address != null
+            RETURN u
+    )
+    LET all_url = UNIQUE(UNION(string_url, object_url_bad_format, object_url_good_format))
+    UPDATE a WITH { url: all_url } IN author
+    

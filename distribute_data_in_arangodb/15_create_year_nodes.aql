@@ -1,0 +1,13 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create year nodes and simplify year in publications
+
+LET year_types = UNIQUE(
+    FOR pub IN publication
+        RETURN TYPENAME(pub.year)
+)
+RETURN year_types
+
+FOR y IN 1936..2022
+    INSERT { number: TO_STRING(y), previous_year: TO_STRING(y - 1), next_year: TO_STRING(y + 1) } INTO year
+    

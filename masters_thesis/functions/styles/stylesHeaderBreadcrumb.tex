@@ -1,0 +1,245 @@
+\pagestyle{fancy}%
+\renewcommand{\headrulewidth}{0pt}%
+\renewcommand{\footrulewidth}{0pt}%
+
+\NewDocumentCommand\myhyperlink{mm}{\hyperlink{#1}{#2}}
+\renewcommand{\sectionmark}[1]{\markboth{\myhyperlink{section.\theHsection}{\thesection\ #1}}{}}% produces numofchapter.numsection name of section now
+\renewcommand{\subsectionmark}[1]{\markright{\myhyperlink{subsection.\theHsubsection}{\thesubsection\ #1}}}% produces numofchapter.numsection.numofsubsection name of subsection now
+
+\renewcommand\tabularxcolumn[1]{m{#1}} % vertically center alignment
+
+\fancyhf{}%
+\fancyhead{}%
+\fancyhead[L]{%
+	\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+		\rowcolor{lightestgray}%
+		\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+		\large{%
+			\hyperref[Index]{Index}% Point to index, always present.
+			\ifthenelse{\not\equal{\nameref{\chaptername::\thechapter}}{}}{% Point to chapter now, only if chapter isn't empty
+				\ifthenelse{\not\equal{\value{chapter}}{}}{% Point to chapter now, only if it's number isn't 0
+					\ \adforn{43}\ % Symbol >
+					\hyperref[\chaptername::\thechapter]{\thechapter\ \nameref{\chaptername::\thechapter}}% The hyperlink.
+					\ifthenelse{\not\equal{\firstleftmark}{}}{% Point to section now, only if it isn't empty
+						\ifthenelse{\not\equal{\value{section}}{0}}{% Point to section now, only if it's number isn't 0
+							\ \adforn{43}\ % Symbol >
+							\firstleftmark% The hyperlink.
+							\ifthenelse{\not\equal{\value{subsection}}{0}}{% Point to subsection now, only if it's number isn't 0
+								\ifthenelse{\not\equal{\firstrightmark}{}}{% Point to section now, only if it's number isn't 0
+									\ifthenelse{\not\equal{\firstleftmark}{\firstrightmark}}{% Point to subsection now, only if section and subsection don't have the same name
+										\ \adforn{43}\ % Symbol >
+										\firstrightmark% The hyperlink.
+									}{}%
+								}{}%
+							}{}%
+						}{}%
+					}{}%
+				}{}%
+			}{}%
+		}\\%
+		\hline%
+	\end{tabularx}%
+}%
+\fancyfoot{}%
+\fancyfoot[C]{%
+	\begin{tabularx}{1\textwidth}{ l >{\centering\arraybackslash}X }%
+		\hline%
+		\rowcolor{lightestgray}%
+		\rule[-7pt]{-11.5pt}{20pt} & % to fix heigth of the row
+		\large{%
+			\thepage%
+		}\\%
+	\end{tabularx}%
+}%
+
+\fancypagestyle{noheaderfancy}{
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead{}% Update components of fancy
+}
+
+\makeatletter% redifining plain as noheaderfancy
+	\let\ps@plain\ps@noheaderfancy
+\makeatother
+
+\fancypagestyle{grayheaderfancy}{
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & \\% to fix heigth of the row
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{indexfancy}{% for index
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{listoffiguresfancy}{% for list of figures
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Listoffigures]{List of figures}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{listoftablesfancy}{% for list of tables
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Listoftables]{List of tables}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{listofcodelistingsfancy}{% for list of code listings
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Listofcodelistings]{List of code listings}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{listofdefinitionstheoremsproofsandremarksfancy}{% for list of definitions, theorems, proofs and remarks
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Listofdefinitionstheoremsproofsandremarks]{List of definitions, theorems, proofs and remarks}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{listoftodosfancy}{% for list of definitions, theorems, proofs and remarks
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Listoftodos]{List of ToDos}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{acronymsfancy}{% for acronyms
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Acronyms]{Acronyms}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{nomenclaturefancy}{% for nomenclature
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Nomenclature]{Nomenclature}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{glossaryfancy}{% for glossary
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Backmatter:Glossary]{Glossary}
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}
+
+\fancypagestyle{bibliofancy}{% for bibliography
+	\pagestyle{fancy}% Duplicate fancy page style
+	\fancyhead[L]{%
+		\begin{tabularx}{1\textwidth}{ l >{\raggedright\arraybackslash}X }%
+			\rowcolor{lightestgray}%
+			\rule[-11.5pt]{-11.5pt}{30pt} & % to fix heigth of the row
+			\large{%
+				\hyperref[Index]{Index}% Point to index, always present.
+				\ \adforn{43}\ % Symbol >
+				\hyperref[Backmatter:Bibliography]{Bibliography}
+				\ifthenelse{\not\equal{\firstleftmark}{}}{% Point to section now, only if it isn't empty
+					\ifthenelse{\not\equal{\value{section}}{0}}{% Point to section now, only if it's number isn't 0
+						\ \adforn{43}\ % Symbol >
+						\firstleftmark% The hyperlink.
+						\ifthenelse{\not\equal{\value{subsection}}{0}}{% Point to subsection now, only if it's number isn't 0
+							\ifthenelse{\not\equal{\firstrightmark}{}}{% Point to section now, only if it's number isn't 0
+								\ifthenelse{\not\equal{\firstleftmark}{\firstrightmark}}{% Point to subsection now, only if section and subsection don't have the same name
+									\ \adforn{43}\ % Symbol >
+									\firstrightmark% The hyperlink.
+								}{}%
+							}{}%
+						}{}%
+					}{}%
+				}{}%
+			}\\%
+			\hline%
+		\end{tabularx}%
+	}%
+}

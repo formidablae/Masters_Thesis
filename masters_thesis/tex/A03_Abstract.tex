@@ -1,0 +1,19 @@
+In the last few decades, Database Management Systems (\acrshort{DBMS}s) became powerful tools for storing large amount of data and executing complex queries over them. In the recent years, the growing amount of unstructured or semi-structured data has seen a shift from representing data in the \gls{relational model} towards alternative data models. Graph Databases and Graph Database Management Systems (\acrshort{GDBMS}s) have seen an increase in use due to their ability to manage highly-interconnected, continuously evolving data.
+
+In a typical graph data model, a node represents an entity and an edge represents a connection between two nodes, describing the relationship between them. In the application domains where relationships have relevant importance, Graph Database Management Systems (\acrshort{GDBMS}s) are having great popularity since the relationships can be explicitly modeled and easily visualized in a graph data model. This kind of model is suitable for storing data without rigid schema for use cases like network processing or data integration. In addition to the storage flexibility, graph databases provide new querying possibilities in the form of \glspl{Path Query}, detection of \gls{Connected Components}, \gls{Pattern Matching}, etc.
+
+This thesis is a documentation of the work done in implementing a system to identify clusters in graph modeled data using a \gls{Label Propagation} Community Detection Algorithm.
+The graph was built using datasets of academic publications in the field of Computer Science obtained from \gls{dblp.org} .
+The system developed is a \gls{FullStack} \gls{WebApp} consisting of a web-based user interface, an \acrshort{API} and the data (nodes, edges, graph) stored in a Graph Database Management System (\acrshort{GDBMS}).
+
+Described in this document are:
+\setlist{nolistsep} \begin{itemize}[noitemsep]
+	\item the process of manipulation pre-import and import of the data in a Graph Database Management System (\acrshort{GDBMS}) such as ArangoDB, creation of nodes, relations (edges) between the nodes and a graph composed of these nodes and edges;
+	\item the GraphQL API implemented in NodeJS to request data from the Graph Database Management System (\acrshort{GDBMS});
+	\item the frontend interface made with \gls{TypeScript} and \gls{React} consisting of the search functionalities and ability to visualize results in Cytoscape Network Graphs;
+	\item the \gls{Label Propagation} Community Detection Algorithm execution on the graph, the found clusters which are stored and visualized to the user whenever requested.
+\end{itemize}
+
+This thesis hopes to contribute with a practical hands-on approach on the graph representation, integration and analysis of interconnected data.
+
+\textbf{Keywords}: Graph Theory, Graph Database, Clustering, Community Detection, \gls{Label Propagation}, \gls{Pregel}, Academia, Collaboration Graph, ArangoDB, \gls{GraphQL}, \gls{NodeJS}, \gls{TypeScript}, \gls{React}, \gls{Cytoscape}

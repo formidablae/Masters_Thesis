@@ -1,0 +1,31 @@
+\hypertarget{Cover}{}
+\begin{titlepage}%
+	\begin{figure}%
+		\ThisCenterWallPaper{1}{images/cover.jpg}%
+		%\captionlistentry[figure]{Cover image}% figure with chapter and section number
+		\addcontentsline{lof}{figure}{Cover image}% figure without chapter and section number
+		\label{fig:cover}%
+	\end{figure}
+	{\ }
+	
+	\vspace{-2.25cm}
+	
+	\centering \textcolor{lightestgray}{\fontsize{24pt}{30pt}\selectfont\mydocumentsubtitle}
+	
+	\begin{flushleft}
+		\textcolor{white}{\fontsize{74pt}{89pt}\selectfont\textbf{\MakeUppercase{\mydocumenttitle}}}
+	\end{flushleft}
+	
+	\vspace{14cm}
+	\begin{tikzpicture}
+		\hspace{5.25cm}
+		\node[
+			rectangle,
+			draw = lightestgray,
+			text = darkergray,
+			fill = lightestgray,
+			minimum width = 10.5cm, 
+			minimum height = 1.2cm
+		] (r) at (0, 0) {\huge{\myauthor}};
+	\end{tikzpicture}
+\end{titlepage}

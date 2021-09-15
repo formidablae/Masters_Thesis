@@ -1,0 +1,41 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between publication and cited publications nodes
+
+FOR pub1 IN publication
+    FOR pub2 IN publication
+        FILTER LENGTH(pub2.cite) > 0 AND pub1["@key"] IN pub2.cite
+        INSERT { _from:            pub2._id,
+                _to:               pub1._id, 
+                label:             "publication_has_cited_publication",
+                publication_title: pub2.title,
+                publication_year:  pub2.year,
+                first_author:      pub2.author[0] == null ? "" : pub2.author[0],
+                cited_publication_title: pub1.title,
+                cited_publication_year:  pub1.year,
+                cited_first_author:      pub1.author[0] == null ? "" : pub1.author[0],
+                weight:            9 } INTO "publication-publication_cited"
+
+FOR pub1 IN publication
+    FOR pub2 IN publication
+        FILTER LENGTH(pub2.cite) > 0 AND pub1["@key"] IN pub2.cite
+        INSERT { _from:            pub1._id,
+                _to:               pub2._id, 
+                label:             "publication_has_been_cited_in_publication",
+                publication_title: pub2.title,
+                publication_year:  pub2.year,
+                first_author:      pub2.author[0] == null ? "" : pub2.author[0],
+                cited_publication_title: pub1.title,
+                cited_publication_year:  pub1.year,
+                cited_first_author:      pub1.author[0] == null ? "" : pub1.author[0],
+                weight:            9 } INTO "publication-publication_cited"
+
+// remove duplicate edges @coll: "publication-publication_cited"
+FOR e1 IN @@coll
+    FOR e2 IN @@coll
+        FILTER e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

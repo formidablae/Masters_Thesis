@@ -1,0 +1,97 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to correct cite in publication nodes
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_STRING(pub.cite)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_OBJECT(pub.cite)
+    LIMIT 50
+    RETURN pub
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_STRING(pub.cite)
+    UPDATE pub WITH { cite: [ { value: pub.cite, label: "" } ] } IN publication
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    FOR el IN pub.cite
+        FILTER IS_STRING(el)
+        LIMIT 50
+        RETURN pub
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    FOR el IN pub.cite
+        FILTER IS_ARRAY(el)
+        LIMIT 50
+        RETURN pub
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    FOR el IN pub.cite
+        FILTER IS_OBJECT(el)
+        LIMIT 50
+        RETURN pub
+
+LET attrs = UNIQUE(FLATTEN(
+    FOR pub IN publication
+        FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+        FOR el IN pub.cite
+            FILTER IS_OBJECT(el)
+            RETURN ATTRIBUTES(el)
+))
+RETURN attrs
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    LET string_cite = FLATTEN(
+        FOR el IN pub.cite
+            FILTER IS_STRING(el)
+            RETURN { value: el, label: "" }
+    )
+    LET object_cite_bad_format = FLATTEN(
+        FOR el IN pub.cite
+            FILTER IS_OBJECT(el) AND el.value == null AND el["#text"] != null
+            RETURN { value: el["#text"], label: (el["@label"] == null ? "" : el["@label"]) }
+    )
+    LET object_cite_good_format = FLATTEN(
+        FOR el IN pub.cite
+            FILTER IS_OBJECT(el) AND el.value != null
+            RETURN el
+    )
+    LET all_cite = UNIQUE(FLATTEN(UNION(string_cite, object_cite_bad_format, object_cite_good_format)))
+    UPDATE pub WITH { cite: all_cite } IN publication
+
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    FOR c IN pub.cite
+        FILTER LENGTH(c.value) < 7
+        LIMIT 20
+        RETURN c
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    LET good_cites = FLATTEN(
+        FOR c IN pub.cite
+            FILTER c.value != "..."
+            RETURN c
+    )
+    UPDATE pub WITH { cite: good_cites } IN publication
+
+FOR pub IN publication
+    FILTER pub.cite != null AND pub.cite != "" AND pub.cite != [] AND IS_ARRAY(pub.cite) AND LENGTH(pub.cite) > 0
+    LET good_cites = UNIQUE(FLATTEN(
+        FOR c IN pub.cite
+            RETURN c.value
+    ))
+    UPDATE pub WITH { cite: good_cites } IN publication

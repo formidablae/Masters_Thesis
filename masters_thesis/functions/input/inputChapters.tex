@@ -1,0 +1,58 @@
+\setcounter{chapter}{-1}
+
+\chapter{Preface} \label{Preface}
+\label{\chaptername::\thechapter}
+\input{tex/A07_Preface.tex}
+
+\cleardoublepage\begingroup\makeatletter\let\ps@plain\ps@empty% part pagestyle empty
+	\part{Graph Theory, Graph Databases and Graph Algorithms}
+\endgroup
+
+\chapter{Introduction} \label{chapter:Introduction}
+\label{\chaptername::\thechapter}
+\setcounter{mtc}{12}% 12 without list of to dos, 13 with
+\iftodos{\setcounter{mtc}{13}}
+\input{tex/C01_Introduction.tex}
+
+\chapter{Literature Review} \label{chapter:LiteratureReview} \label{\chaptername::\thechapter}
+\input{tex/C02_Literature_Review.tex}
+
+\chapter{Community Detection} \label{chapter:CommunityDetection} \label{\chaptername::\thechapter}
+\input{tex/C03_Community_Detection.tex}
+
+\cleardoublepage\begingroup\makeatletter\let\ps@plain\ps@empty% part pagestyle empty
+	\part{Implementation of a WebApp with Graph Databases, GraphQL API and graph rendering libraries in front\-end}
+\endgroup
+
+\chapter{Implementing the WebApp} \label{chapter:ImplementingtheWebApp} \label{\chaptername::\thechapter}
+\input{tex/C04_Implementing_the_WebApp.tex}
+
+\chapter{Display of the results} \label{chapter:Displayoftheresults} \label{\chaptername::\thechapter}
+\input{tex/C05_Display_of_the_results.tex}
+
+\chapter{Conclusions} \label{chapter:Conclusions} \label{\chaptername::\thechapter}
+\input{tex/C06_Conclusions.tex}
+
+\newcounter{mychaptercountr}
+\setcounter{mychaptercountr}{\value{chapter}}
+
+\renewcommand{\chaptername}{Appendix}
+\renewcommand{\thechapter}{A}
+\chapter{Source Code} \label{appendix:SourceCode} \label{\chaptername::\thechapter}
+\input{tex/Z01_Appendix_A_Source_Code.tex}
+\addtocounter{chapter}{+1}
+\addtocounter{mychaptercountr}{+1}
+
+\renewcommand{\thechapter}{B}
+\chapter{API Docs} \label{appendix:APIDocs} \label{\chaptername::\thechapter}
+\input{tex/Z02_Appendix_B_API_Docs.tex}
+\addtocounter{chapter}{+1}
+\addtocounter{mychaptercountr}{+1}
+
+\renewcommand{\chaptername}{Chapter}
+\renewcommand{\thechapter}{\arabic{chapter}}
+\setcounter{chapter}{\arabic{mychaptercountr}}
+\setcounter{section}{0}
+
+\cleardoublepage \phantomsection
+\pagestyle{empty}

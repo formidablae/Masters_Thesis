@@ -1,0 +1,26 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create journal nodes
+
+LET unique_journals = UNIQUE(
+    FOR pub IN publication
+        FILTER pub.journal != ""
+        RETURN pub.journal
+)
+
+LET count_unique_journals = COUNT(
+    FOR j IN unique_journals
+        RETURN 1
+)
+
+RETURN count_unique_journals
+
+
+LET unique_journals = UNIQUE(
+    FOR pub IN publication
+        FILTER pub.journal != ""
+        RETURN pub.journal
+)
+
+FOR j IN unique_journals
+    INSERT { name: j } INTO journal

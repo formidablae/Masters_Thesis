@@ -1,0 +1,72 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to merge data of two duplicate authors that
+// have different info in author nodes
+
+FOR dup_data IN duplicate_authors_merge_data
+    FOR a1 IN author
+        FOR a2 IN author
+            FILTER a1._key == dup_data.author1_key AND a2._key == dup_data.author2_key
+            LET bibtex2 = a2.bibtex
+            LET orcid2 = a2.orcid
+            LET urls = UNION_DISTINCT(a1.url, a2.url)
+            LET isnot2 = a2.isnot
+            LET notes = UNION_DISTINCT(a1.note, a2.note)
+            LET kind2 = a2.kind
+            UPDATE a1 WITH { bibtex_2: bibtex2, orcid_2: orcid2, url: urls, isnot_2: isnot2, note: notes, kind_2: kind2 } IN author
+
+FOR a IN author
+    FILTER a["orcid"] != null AND a["orcid"] != ""
+       AND a["orcid_2"] != null AND a["orcid"] == a["orcid_2"]
+    UPDATE a WITH { "orcid_2": null } IN author OPTIONS { keepNull: false }
+
+FOR a IN author
+    FILTER a["orcid"] != null AND a["orcid"] == ""
+       AND a["orcid_2"] != null AND a["orcid_2"] != ""
+    UPDATE a WITH { "orcid": a["orcid_2"] } IN author
+
+FOR a IN author
+    FILTER a["orcid"] != null AND a["orcid"] != ""
+       AND a["orcid_2"] != null AND a["orcid_2"] != "" AND a["orcid"] != a["orcid_2"]
+    UPDATE a WITH { "other_orcid": a["orcid_2"] } IN author
+
+FOR a IN author
+    FILTER a["orcid_2"] != null
+    UPDATE a WITH { "orcid_2": null } IN author OPTIONS { keepNull: false }
+
+
+
+
+
+FOR a IN author
+    FILTER a["bibtex"] != null AND a["bibtex"] != ""
+       AND a["bibtex_2"] != null AND a["bibtex"] == a["bibtex_2"]
+    UPDATE a WITH { "bibtex_2": null } IN author OPTIONS { keepNull: false }
+
+FOR a IN author
+    FILTER a["bibtex"] != null AND a["bibtex"] == ""
+       AND a["bibtex_2"] != null AND a["bibtex_2"] != ""
+    UPDATE a WITH { "bibtex": a["bibtex_2"] } IN author
+
+FOR a IN author
+    FILTER a["bibtex"] != null AND a["bibtex"] != ""
+       AND a["bibtex_2"] != null AND a["bibtex_2"] != "" AND a["bibtex"] != a["bibtex_2"]
+    UPDATE a WITH { "other_bibtex": a["bibtex_2"] } IN author
+
+FOR a IN author
+    FILTER a["bibtex_2"] != null
+    UPDATE a WITH { "bibtex_2": null } IN author OPTIONS { keepNull: false }
+
+
+FOR a IN author
+    UPDATE a WITH { "isnot_2": null, "kind_2": null } IN author OPTIONS { keepNull: false }
+
+
+LET to_be_removed = UNIQUE(
+    FOR a1 IN author
+        FOR a2 IN author
+            FILTER a1._key > a2._key AND a1.name == a2.name
+            RETURN a2._key
+)
+FOR t IN to_be_removed
+    REMOVE { _key: t } IN author

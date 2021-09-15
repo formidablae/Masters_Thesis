@@ -1,0 +1,48 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create author nodes
+
+LET ptypes = (
+    FOR ptype IN pub_type
+        RETURN DISTINCT ptype.name
+)
+
+LET all_authors_unformatted = (
+    FOR ptype IN ptypes
+        FOR doc IN dblp
+//            LIMIT 4000000
+            FILTER doc[ptype].author != null
+            RETURN doc[ptype].author
+)
+
+LET all_authors_formatted_mixed = (
+    FOR author_list IN all_authors_unformatted
+        FOR author IN author_list[*]
+        RETURN { author_data: author }
+)
+
+LET all_authors_formatted_with_orcid_or_bibtex = (
+    FOR author_with_orcid IN all_authors_formatted_mixed
+        FILTER author_with_orcid.author_data["@orcid"] != null OR author_with_orcid.author_data["@bibtex"] != null
+        RETURN { name: author_with_orcid.author_data["#text"]}
+)
+
+LET all_authors_formatted_without_orcid_or_bibtex = (
+    FOR author_without_orcid IN all_authors_formatted_mixed
+        FILTER author_without_orcid.author_data["@orcid"] == null AND author_without_orcid.author_data["@bibtex"] == null
+        RETURN { name: author_without_orcid.author_data}
+)
+
+LET all_authors_formatted = (
+    RETURN UNIQUE(FLATTEN(APPEND([all_authors_formatted_with_orcid_or_bibtex], [all_authors_formatted_without_orcid_or_bibtex], true), 2))
+)
+
+// LET number_of_authors = LENGTH(all_authors_formatted[0])
+// LET number_of_distinct_authors = COUNT_DISTINCT(all_authors_formatted[0])
+// RETURN { number: number_of_authors, number_of_distinct: number_of_distinct_authors }
+
+FOR author_to_add IN all_authors_formatted[0]
+    INSERT { name: author_to_add.name} INTO author
+
+FOR a IN author
+    UPDATE a WITH { orcid: "", bibtex: "", aux: "" } IN author

@@ -1,0 +1,26 @@
+%\glsaddall% show in glossary with page number all entries defined
+\glsaddallunused% show in glossary without page number all not referenced, not used entries that were defined
+
+\cleardoublepage \phantomsection
+\pagestyle{glossaryfancy}
+\addtocounter{chapter}{+1}
+\chapter[Glossary]{\centering Glossary}%
+%\addcontentsline{toc}{chapter}{Glossary}
+\label{Backmatter:Glossary}\label{\chaptername::\thechapter}
+\vspace*{-0.5cm}
+\noindent\begin{center}
+	Index of all terms and their pages of appearance in the thesis.
+\end{center}
+\vspace*{-0.5cm}
+\printglossary[
+	%style=mcolindex, % glossary in columns
+	%style=mcoltree,% glossary with subentries in columns
+	style=mcoltreegroup,% glossary with subentries in columns with letter groups
+	%style=mcoltreehypergroup,% glossary with subentries in columns with letter groups with navigation line
+	%style=mcoltreespannav,% like mcoltreehypergroup but with navigation line fullsize, not in column
+	%style=tree,% glossary with subentries without columns
+	%style=treehypergroup,% glossary with subentries without columns with letter category
+	%style=alttreehypergroup,% glossary with subentries without columns with letter groups with navigation line
+	title={\vspace*{-1cm}},
+	%toctitle={Glossary},
+]

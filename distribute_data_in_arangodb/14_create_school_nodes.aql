@@ -1,0 +1,63 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create school nodes and simplify school in publications
+
+LET school_types = UNIQUE(
+    FOR pub IN publication
+        RETURN TYPENAME(pub.school)
+)
+RETURN school_types
+
+LET school_types = UNIQUE(
+    FOR pub IN publication
+        FILTER IS_ARRAY(pub.school)
+        FOR s IN pub.school
+            RETURN TYPENAME(s)
+)
+RETURN school_types
+
+FOR pub IN publication
+    FILTER pub.school != null AND pub.school != "" AND pub.school != []
+    INschT { key: pub["@key"], school_list: pub.school } INTO school_temp
+
+LET count_array_school = COUNT(
+    FOR sch IN school_temp
+        FILTER IS_ARRAY(sch.school_list)
+        RETURN 1
+)
+RETURN count_array_school
+
+LET count_string_school = COUNT(
+    FOR sch IN school_temp
+        FILTER IS_STRING(sch.school_list)
+        RETURN 1
+)
+RETURN count_string_school
+
+LET school_array_length = UNIQUE(
+    FOR sch IN school_temp
+        FILTER IS_ARRAY(sch.school_list)
+        RETURN LENGTH(sch.school_list)
+)
+RETURN school_array_length
+
+FOR sch IN school_temp
+    FILTER IS_STRING(sch.school_list)
+    UPDATE sch WITH { school_list: [sch.school_list] } IN school_temp
+
+LET unique_schools = UNIQUE(
+    FOR sch IN school_temp
+        FOR s IN sch.school_list
+        RETURN s
+)
+FOR school_name IN unique_schools
+    INSERT { name: school_name } INTO school
+
+FOR pub IN publication
+    FOR sch IN school_temp
+        FILTER pub["@key"] == sch.key
+        UPDATE pub WITH { school: sch.school_list } IN publication
+
+FOR pub IN publication
+    FILTER pub.school == null OR pub.school == ""
+    UPDATE pub WITH { school: [] } IN publication

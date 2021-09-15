@@ -1,0 +1,27 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create for each node in all_nodes
+// a list of the tokens composing the name
+// or title
+
+FOR n IN all_nodes
+    UPDATE n WITH { tokens: TOKENS(LOWER(n.name), "text_en") } IN all_nodes
+
+LET longest_token_length = MAX(
+    FOR n IN all_nodes
+        LET this_max = MAX(
+            FOR t IN n.tokens
+                RETURN LENGTH(t)
+        )
+        RETURN this_max
+)
+// longest_token_length = 85
+
+LET longest_token_length = 85
+FOR l IN 1..longest_token_length
+    FOR n IN all_nodes
+        FOR t IN n.tokens
+            FILTER LENGTH(t) >= l
+            LIMIT 10
+            LET prop = SUBSTRING(t, 0, l)
+            INSERT { prop: n } INTO all_nodes_searchtree

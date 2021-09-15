@@ -1,0 +1,27 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to add orcid to editor nodes
+
+FOR ed IN editor
+    FILTER ed.orcid == null
+    UPDATE ed WITH { orcid: "" } IN editor
+
+LET editors = UNIQUE(
+    FOR ed IN editor
+        LET nm = ed.name
+        LET orcid = ed.orcid
+        RETURN { name: nm, orcid: ed.orcid }
+)
+
+FOR e IN editors
+    INSERT e INTO editor_unique
+
+// remove editor duplicates
+FOR e1 IN editor
+    FOR e2 IN editor
+        FILTER e1.name == e2.name AND e1["_key"] != e2["_key"] AND e2.orcid == ""
+        UPDATE e1 WITH { name: "delete" } IN editor
+
+FOR e in editor
+    FILTER e.name == "delete"
+    REMOVE e IN editor

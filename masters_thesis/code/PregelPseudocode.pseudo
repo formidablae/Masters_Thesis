@@ -1,0 +1,7 @@
+while not converged do
+	/* Superstep */
+	communicate:
+		send(msg: own_value, to: neighbors)
+	compute:
+		own_value $ \leftarrow $ max(value_from_all_messages $ \cup $ own_value)
+end while

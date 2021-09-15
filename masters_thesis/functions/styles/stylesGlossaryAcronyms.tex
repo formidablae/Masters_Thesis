@@ -1,0 +1,33 @@
+\renewcommand*{\glstextformat}[1]{%
+    \textcolor{darkergray}{% make glossaries links different color
+    %\textcolor{Magenta}{% use for debugging
+        #1%
+        %\raise1ex\hbox{\fontsize{4}{4.8}\selectfont※}% add Komejirushi (reference mark)
+    }%
+}%
+
+\renewcommand{\glossarypreamble}{\fontsize{8}{8}\selectfont}% glossary fontsize
+
+\makeatletter% make capital uppercase first letter of each word in a glossary entry with \Glsfirst or not with \glsfirst
+\let\oldmakefirstuc\makefirstuc
+\renewcommand*{\makefirstuc}[1]{%
+	\def\gls@add@space{}%
+	\mfu@capitalisewords#1 \@nil\mfu@endcap
+}
+\def\mfu@capitalisewords#1 #2\mfu@endcap{%
+	\def\mfu@cap@first{#1}%
+	\def\mfu@cap@second{#2}%
+	\gls@add@space
+	\oldmakefirstuc{#1}%
+	\def\gls@add@space{ }%
+	\ifx\mfu@cap@second\@nnil
+		\let\next@mfu@cap\mfu@noop
+	\else
+		\let\next@mfu@cap\mfu@capitalisewords
+	\fi
+	\next@mfu@cap#2\mfu@endcap
+}
+\makeatother
+
+\makeglossaries
+\glstocfalse

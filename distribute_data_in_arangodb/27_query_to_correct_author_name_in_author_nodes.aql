@@ -1,0 +1,21 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to change name of an author in author nodes
+
+
+FOR correction IN all_name_corrections
+    LET other_names = UNIQUE(
+        FOR from_correction IN all_name_corrections
+            FILTER from_correction.will_become == correction.will_become
+            RETURN from_correction.is_now
+    )
+    UPDATE correction WITH { other_names: other_names } IN all_name_corrections
+
+FOR corrections IN all_name_corrections
+    FOR a IN author
+        FILTER a.name == corrections.is_now OR a.name == corrections.will_become
+        UPDATE a WITH { name: corrections.will_become, other_names: corrections.other_names } IN author
+
+FOR a IN author
+    FILTER a.other_names == null
+    UPDATE a WITH { other_names: [] } IN author

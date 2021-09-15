@@ -1,0 +1,6 @@
+PREFIX sn: <http://www.socialnetwork.org/>
+SELECT ?N
+WHERE {
+	?X sn:type sn:Person . ?X sn:firstName ?N .
+	?X sn:knows ?Y . ?Y sn:firstName "John"
+}

@@ -1,0 +1,23 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create a collection with nodes,
+// their id, name, type and number of appearances
+
+LET collecti = [affiliation_institution, author, editor, journal, publication, publisher, school, series]
+FOR coll IN collecti
+    FOR c IN coll
+        INSERT { id: c._id, name: c.graph_name, type: SUBSTITUTE( SPLIT(c._id, "/" )[0], "_", " ") } INTO all_nodes
+
+LET types = ["affiliation institution", "author", "editor", "journal", "publication", "publisher", "school", "series"]
+FOR t IN types
+    FOR el IN all_nodes
+        FILTER el.type == t
+        LET count_vertices = LENGTH(UNIQUE(FLATTEN(
+            FOR vertex, edge, path IN 1..1
+            ANY el GRAPH author_publisher_editor_journal_publication_series_affiliation_school_cited_crossreffed
+                RETURN DISTINCT path.vertices[*]._id
+        )))
+        UPDATE el WITH { appearances: ((count_vertices != null AND IS_NUMBER(count_vertices)) ? count_vertices : 1) } IN all_nodes
+
+FOR el IN all_nodes
+    UPDATE el WITH { has_tokes: SPLIT(el.name, " ") }

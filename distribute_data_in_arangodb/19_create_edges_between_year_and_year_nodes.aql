@@ -1,0 +1,27 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between year and year nodes
+// next_year, previous_year
+
+FOR y1 IN year
+    FOR y2 IN year
+        FILTER TO_NUMBER(y1.number) == TO_NUMBER(y2.number) - 1
+        INSERT { _from:      y1._id,
+                 _to:        y2._id, 
+                 label:      "year_to_next_year",
+                 year:       y1.number,
+                 next_year:  y2.number,
+                 weight:     1 } INTO "year-year"
+
+FOR y1 IN year
+    FOR y2 IN year
+        FILTER TO_NUMBER(y1.number) == TO_NUMBER(y2.number) + 1
+        INSERT { _from:          y1._id,
+                 _to:            y2._id, 
+                 label:          "year_to_previous_year",
+                 year:           y1.number,
+                 previous_year:  y2.number,
+                 weight:         1 } INTO "year-year"
+
+FOR yea IN year
+    UPDATE yea WITH { graph_name: yea.number } IN year

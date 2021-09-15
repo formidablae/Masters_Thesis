@@ -1,0 +1,164 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to add affiliation info to author nodes
+
+FOR aff IN author_affiliation_data
+    FILTER IS_OBJECT(aff.note)
+    RETURN aff
+
+FOR aff IN author_affiliation_data
+    FILTER IS_STRING(aff.note)
+    RETURN aff
+
+FOR aff IN author_affiliation_data
+    FILTER IS_ARRAY(aff.note) AND LENGTH(aff.note) > 0
+    FOR nt IN aff.note
+        FILTER IS_STRING(nt)
+        RETURN nt
+
+FOR aff IN author_affiliation_data
+    FILTER IS_ARRAY(aff.note) AND LENGTH(aff.note) > 0
+    LET non_aff_notes = FLATTEN(
+        LET string_notes_non_aff = (
+            FOR nt IN aff.note
+                FILTER IS_STRING(nt)
+                RETURN { value: nt, type: "", label: "" }
+        )
+        LET object_notes_non_aff_no_label = (
+            FOR nt IN aff.note
+                FILTER IS_OBJECT(nt) AND (nt["@label"] == null OR nt["@label"] == "") AND nt["@type"] != "affiliation"
+                RETURN { value: nt["#text"], label: "", type: nt["@type"] == null ? "" : nt["@type"] }
+        )
+        LET object_notes_non_aff_with_label = (
+            FOR nt IN aff.note
+                FILTER IS_OBJECT(nt) AND nt["@label"] != null AND nt["@label"] != "" AND nt["@type"] != "affiliation"
+                RETURN { value: nt["#text"], label: nt["@label"], type: nt["@type"] == null ? "" : nt["@type"] }
+        )
+        LET all_notes = UNION(string_notes_non_aff, object_notes_non_aff_no_label, object_notes_non_aff_with_label)
+        RETURN all_notes
+    )
+    
+    FOR a IN author
+    FILTER aff.author[0] == a.name
+        LET a_notes = a.note == null ? [] : a.note
+        LET merged_all_notes = UNION(non_aff_notes, a_notes)
+        UPDATE a WITH { note: merged_all_notes } IN author
+
+
+FOR aff IN author_affiliation_data
+    FILTER IS_ARRAY(aff.note) AND LENGTH(aff.note) > 0
+    LET aff_notes = FLATTEN(
+        LET object_notes_aff_no_label = (
+            FOR nt IN aff.note
+                FILTER IS_OBJECT(nt) AND (nt["@label"] == null OR nt["@label"] == "") AND nt["@type"] == "affiliation"
+                RETURN { value: nt["#text"], label: "", type: "affiliation" }
+        )
+        LET object_notes_aff_with_label = (
+            FOR nt IN aff.note
+                FILTER IS_OBJECT(nt) AND nt["@label"] != null AND nt["@label"] != "" AND nt["@type"] == "affiliation"
+                RETURN { value: nt["#text"], label: nt["@label"], type: "affiliation" }
+        )
+        LET all_notes = UNION(object_notes_aff_no_label, object_notes_aff_with_label)
+        RETURN all_notes
+    )
+    
+    FOR a IN author
+    FILTER aff.author[0] == a.name
+        LET a_notes = a.note == null ? [] : a.note
+        LET merged_all_notes = FLATTEN(UNION(aff_notes, a_notes))
+        UPDATE a WITH { note: merged_all_notes } IN author
+
+FOR aff IN author_affiliation_data
+    UPDATE aff WITH { note: null } IN author_affiliation_data OPTIONS { keepNull: false }
+
+
+
+
+
+FOR aff IN author_award_data
+    FILTER IS_ARRAY(aff.note) AND LENGTH(aff.note) > 0
+    LET non_aff_notes = FLATTEN(
+        LET string_notes_non_aff = (
+            FOR nt IN aff.note
+                FILTER IS_STRING(nt)
+                RETURN { value: nt, type: "", label: "" }
+        )
+        LET object_notes_non_aff_no_label = (
+            FOR nt IN aff.note
+                FILTER IS_OBJECT(nt) AND (nt["@label"] == null OR nt["@label"] == "") AND nt["@type"] != "affiliation"
+                RETURN { value: nt["#text"], label: "", type: nt["@type"] == null ? "" : nt["@type"] }
+        )
+        LET object_notes_non_aff_with_label = (
+            FOR nt IN aff.note
+                FILTER IS_OBJECT(nt) AND nt["@label"] != null AND nt["@label"] != "" AND nt["@type"] != "affiliation"
+                RETURN { value: nt["#text"], label: nt["@label"], type: nt["@type"] == null ? "" : nt["@type"] }
+        )
+        LET all_notes = UNION(string_notes_non_aff, object_notes_non_aff_no_label, object_notes_non_aff_with_label)
+        RETURN all_notes
+    )
+    
+    FOR a IN author
+    FILTER aff.author[0] == a.name
+        LET a_notes = a.note == null ? [] : a.note
+        LET merged_all_notes = UNION(non_aff_notes, a_notes)
+        UPDATE a WITH { note: merged_all_notes } IN author
+
+FOR aff IN author_award_data
+    UPDATE aff WITH { note: null } IN author_award_data OPTIONS { keepNull: false }
+
+
+
+
+
+
+
+FOR a IN author
+    FILTER a.note != null AND a.note != [] AND LENGTH(a.note) > 0
+    LET string_note = (
+        FOR n IN a.note
+            FILTER IS_STRING(n)
+            RETURN { value: n, label: "", type: "" }
+    )
+    LET object_note_bad_format = (
+        FOR n IN a.note
+            FILTER IS_OBJECT(n) AND n.value == null
+            RETURN { value: n["#text"], label: (n["@label"] == null ? "" : n["@label"]), type: (n["@type"] == null ? "" : n["@type"]) }
+    )
+    LET object_note_good_format = (
+        FOR n IN a.note
+            FILTER IS_OBJECT(n) AND n.value != null
+            RETURN n
+    )
+    LET all_notes = UNIQUE(UNION(string_note, object_note_bad_format, object_note_good_format))
+    UPDATE a WITH { note: all_notes } IN author
+
+
+
+FOR a IN author
+    FILTER a.note != null AND a.note != [] AND LENGTH(a.note) > 0
+    LET non_affiliation_notes = (
+        FOR n IN a.note
+            FILTER n.type != "affiliation" AND n.label != "affiliation"
+            RETURN n
+    )
+    LET affiliation_notes = (
+        FOR n IN a.note
+            FILTER n.type == "affiliation" OR n.label == "affiliation"
+            RETURN n
+    )
+    LET existing_affiliations = ( a.affiliation == null ? [] : a.affiliation )
+    LET all_affiliations = UNIQUE(FLATTEN(UNION(existing_affiliations, affiliation_notes)))
+    UPDATE a WITH { affiliation: all_affiliations, note: non_affiliation_notes } IN author
+
+
+
+
+LET all_affiliations = UNIQUE(FLATTEN(
+    FOR a IN author
+        FILTER a.affiliation != null AND a.affiliation != [] AND LENGTH(a.affiliation) > 0
+        FOR aff IN a.affiliation
+            FILTER aff.value != null AND aff.value != ""
+            RETURN { value: aff.value }
+))
+FOR affil IN all_affiliations
+    INSERT affil INTO affiliation_institution

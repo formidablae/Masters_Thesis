@@ -1,0 +1,58 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create editor nodes and simplify editor in publications
+
+FOR pub IN publication
+    FILTER pub.editor != null AND LENGTH(pub.editor) == 1 AND IS_STRING(pub.editor[0])
+    INSERT { name: pub.editor[0], orcid: "" } IN editor
+
+FOR pub IN publication
+    FILTER pub.editor != null AND LENGTH(pub.editor) == 1 AND IS_OBJECT(pub.editor[0])
+    INSERT { name: pub.editor[0]["#text"], orcid: pub.editor[0]["@orcid"] } IN editor
+
+FOR pub IN publication
+    FILTER pub.editor != null AND LENGTH(pub.editor) == 1 AND IS_OBJECT(pub.editor[0])
+    UPDATE pub WITH { editor: [pub.editor[0]["#text"]] } IN publication
+
+
+
+// strings and objects
+FOR pub IN publication
+    FILTER pub.editor != null AND LENGTH(pub.editor) > 1
+    FOR el IN pub.editor
+        FILTER IS_OBJECT(el)
+        INSERT { name: el["#text"], orcid: el["@orcid"] } IN editor
+
+FOR pub IN publication
+    FILTER pub.editor != null AND LENGTH(pub.editor) > 1
+    FOR el IN pub.editor
+        FILTER IS_STRING(el)
+        INSERT { name: el, orcid: "" } IN editor
+
+FOR pub IN publication
+    FILTER pub.editor != null AND LENGTH(pub.editor) > 1
+    LET string_editor_and_position = (
+        FOR e1 IN pub.editor
+            FILTER IS_STRING(e1)
+            LET pos1 = POSITION( pub.editor, e1, true )
+            RETURN { editor: e1, pos: pos1 }
+    )
+    LET object_editor_and_position = (
+        FOR e2 IN pub.editor
+            FILTER IS_OBJECT(e2) AND e2["#text"] != null
+            LET pos2 = POSITION( pub.editor, e2, true )
+            RETURN { editor: e2["#text"], pos: pos2 }
+    )
+    
+    LET merged_edit_pos = UNION(string_editor_and_position, object_editor_and_position)
+    
+    LET full_string_array = (
+        // Taking editors from index 0 and on, to preserve order, position
+        FOR v IN 0..(LENGTH(string_editor_and_position) + LENGTH(object_editor_and_position) - 1)
+            FOR merge_data IN merged_edit_pos
+                FILTER v == merge_data.pos
+                RETURN merge_data.editor
+    )
+    UPDATE pub WITH { editor: full_string_array } IN publication
+
+

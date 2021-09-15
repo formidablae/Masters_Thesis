@@ -1,0 +1,112 @@
+// AQL query to execute in arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create publication nodes
+
+// LET ptypes = (
+//     FOR ptype IN pub_type
+//         RETURN DISTINCT ptype.name
+// )
+//
+// LET list_of_attributes = (
+//     FOR ptype IN ptypes
+//         FOR doc IN dblp
+//             // LIMIT 4000000
+//             FILTER doc[ptype] != null
+//             RETURN DISTINCT { pub_type: ptype, attribute_list: ATTRIBUTES(doc[ptype]) }
+// )
+//
+// FOR attr IN list_of_attributes
+//     INSERT { pub_type: attr.pub_type, attribute_list: attr.attribute_list } INTO publication_attributes
+//
+// LET types = (
+//     FOR pattr_list IN publication_attributes
+//         RETURN DISTINCT pattr_list.pub_type
+// )
+//
+// LET pub_attr_merged = (
+//     FOR t IN types
+//         LET attrs = UNIQUE(FLATTEN(
+//             FOR pattr_list IN publication_attributes
+//                 FILTER pattr_list.pub_type == t
+//                 RETURN DISTINCT pattr_list.attribute_list
+//         ))
+//         RETURN { pub_type: t, attribute_list: attrs }
+// )
+//
+// FOR p_a_m IN pub_attr_merged
+//     INSERT { pub_type: p_a_m.pub_type, attribute_list: p_a_m.attribute_list } INTO publication_attributes_merged
+//
+// FOR typeattrib IN publication_attributes_merged
+//     FOR pub IN dblp
+//         LET tp = typeattrib.pub_type
+//         FILTER pub[tp] != null
+//         // LIMIT 50
+//         INSERT pub[tp] INTO publication
+
+FOR type IN pub_type
+    FOR pub IN dblp
+        FILTER pub[type.name] != null
+        //LIMIT 50
+        INSERT MERGE(pub[type.name], { pub_type: type.name } ) INTO publication
+
+FOR pub IN publication
+    LET array_of_authors = [pub.author]
+    FILTER pub.author != null
+    //LIMIT 50
+    UPDATE pub WITH { author: array_of_authors } IN publication
+
+FOR pub IN publication
+    LET array_of_editors = [pub.editor]
+    FILTER pub.editor != null
+    //LIMIT 50
+    UPDATE pub WITH { editor: array_of_editors } IN publication
+
+FOR attr_list IN publication_attributes_merged
+    LET type = attr_list.pub_type
+    FOR attr IN attr_list.attribute_list
+        FOR pub IN publication 
+            FILTER attr == "author" AND pub.pub_type == type AND pub.author == null
+            //LIMIT 50
+            UPDATE pub WITH { author: [] } IN publication
+
+FOR attr_list IN publication_attributes_merged
+    LET type = attr_list.pub_type
+    FOR attr IN attr_list.attribute_list
+        FOR pub IN publication 
+            FILTER attr == "editor" AND pub.pub_type == type AND pub.editor == null
+            //LIMIT 50
+            UPDATE pub WITH { editor: [] } IN publication
+
+LET all_possible_attributes = UNIQUE(
+    FOR attr_list IN publication_attributes_merged
+        FOR attr IN attr_list.attribute_list
+         RETURN attr
+)
+
+// LET total_appearances_of_attr = (
+//     FOR at IN all_possible_attributes[*]
+//         LET number_of_appearances_for_this_attr = LENGTH(
+//             FOR doc IN publication
+//                 FILTER doc[at] != null AND IS_ARRAY(doc[at])
+//                 RETURN doc
+//         )
+//         RETURN { attribute: at, total_appearances: number_of_appearances_for_this_attr}
+// )
+//
+// RETURN total_appearances_of_attr
+
+LET average_length_of_attr = (
+    FOR at IN all_possible_attributes
+        LET average_length = AVERAGE(
+            FOR pub IN publication
+                FILTER pub[at] != null AND IS_ARRAY(pub[at])
+                RETURN LENGTH(pub[at])
+        )
+        RETURN { attribute: at, average_appearances: average_length }
+)
+
+RETURN average_length_of_attr
+
+FOR pub IN publication
+    FILTER pub.note != null AND IS_ARRAY(pub.note)
+    RETURN pub

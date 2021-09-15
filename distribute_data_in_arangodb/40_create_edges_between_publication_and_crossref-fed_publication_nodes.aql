@@ -1,0 +1,41 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between publication and other crossref-fed publication nodes
+
+FOR pub1 IN publication
+    FOR pub2 IN publication
+        FILTER pub2.crossref != null AND pub2.crossref != "" AND pub1["@key"] == pub2.crossref
+        INSERT { _from:            pub2._id,
+                _to:               pub1._id, 
+                label:             "publication_has_crossreffed_publication",
+                publication_title: pub2.title,
+                publication_year:  pub2.year,
+                first_author:      pub2.author[0] == null ? "" : pub2.author[0],
+                crossreffed_publication_title: pub1.title,
+                crossreffed_publication_year:  pub1.year,
+                crossreffed_first_author:      pub1.author[0] == null ? "" : pub1.author[0],
+                weight:            9 } INTO "publication-publication_crossref"
+
+FOR pub1 IN publication
+    FOR pub2 IN publication
+        FILTER pub2.crossref != null AND pub2.crossref != "" AND pub1["@key"] == pub2.crossref
+        INSERT { _from:            pub1._id,
+                _to:               pub2._id, 
+                label:             "publication_has_been_crossreffed_in_publication",
+                publication_title: pub1.title,
+                publication_year:  pub1.year,
+                first_author:      pub1.author[0] == null ? "" : pub1.author[0],
+                crossreffed_publication_title: pub2.title,
+                crossreffed_publication_year:  pub2.year,
+                crossreffed_first_author:      pub2.author[0] == null ? "" : pub2.author[0],
+                weight:            9 } INTO "publication-publication_crossref"
+
+// remove duplicate edges @coll: "publication-publication_crossref"
+FOR e1 IN @@coll
+    FOR e2 IN @@coll
+        FILTER e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

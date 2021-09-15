@@ -1,0 +1,41 @@
+// AQL query to execute IN arangodb QUERIES
+// or /usr/bin/arangosh on DB host machine
+// to create edges between publisher and publication nodes
+
+FOR pub IN publication
+    FOR p IN publisher
+        FILTER pub.publisher != "" AND pub.publisher == p.name
+        INSERT { _from:             pub._id,
+                 _to:               p._id, 
+                 label:             "publication_is_published_by_publisher",
+                 publisher_name:    p.name,
+                 publication_title: pub.title,
+                 publication_year:  pub.year,
+                 first_author:      pub.author[0] == null ? "" : pub.author[0],
+                 weight:            1 } INTO "publisher-publication"
+
+FOR pub IN publisher
+    UPDATE pub WITH { graph_name: pub.name } IN publisher
+
+FOR pub IN publication
+    FOR p IN publisher
+        FILTER pub.publisher != "" AND pub.publisher == p.name
+        INSERT { _from:             p._id,
+                 _to:               pub._id, 
+                 label:             "publisher_has_published_publication",
+                 publisher_name:    p.name,
+                 publication_title: pub.title,
+                 publication_year:  pub.year,
+                 first_author:      pub.author[0] == null ? "" : pub.author[0],
+                 weight:            1 } INTO "publisher-publication"
+
+// remove duplicate edges @coll: "publisher-publication"
+FOR e1 IN @@coll
+    FILTER e1.label == "publisher_has_published_publication"
+    FOR e2 IN @@coll
+        FILTER e2.label == "publisher_has_published_publication" AND e1._from == e2._from AND e1._to == e2._to AND e1._key > e2._key
+        UPDATE e1 WITH { temp: "delete" } IN @@coll
+
+FOR e in @@coll
+    FILTER e.temp == "delete"
+    REMOVE e IN @@coll

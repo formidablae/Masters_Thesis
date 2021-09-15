@@ -1,0 +1,405 @@
+\lstdefinelanguage{AQL}{
+	keywords = [1]{LET, FOR, IN, FILTER, INSERT, UPDATE, INTO, RETURN},
+	%keywordstyle = \color{darkgreen}\bfseries,
+	morekeywords = [2]{OPTIONS},
+	%keywordstyle = [2]\color{mauve}\bfseries,
+	morekeywords = [3]{true, null, false},
+	%keywordstyle = [3]\color{darkblue}\bfseries,
+	morekeywords = [4]{OUTBOUND, INBOUND, ANY},
+	%keywordstyle = [4]\color{purple}\bfseries,
+	morekeywords = [5]{GRAPH, AND, OR, LIMIT, WITH, PRUNE, DISTINCT, UNIQUE, FLATTEN, APPEND},
+	%keywordstyle = [5]\color{orange}\bfseries,
+	identifierstyle = \color{darkestgray},
+	morestring = [s][\color{red}]{"}{"},
+	morecomment = [l]{//},
+	%commentstyle = \color{darkgray},
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{ASM}{
+	keywords = [1]{asm, if, endif, else, then, in, par, endpar, seq, endseq},
+	%keywordstyle = \color{darkgreen}\bfseries,
+	morekeywords = [2]{import, function, rule, domain, macro, enum, dynamic, controlled, derived, signature, definitions, default, init, initialize, subsetof},
+	%keywordstyle = [2]\color{darkblue}\bfseries,
+	%identifierstyle = \color{darkestgray},
+	sensitive = false,
+	comment = [l]{//},
+	%commentstyle = \color{darkgray},
+	%stringstyle = \color{darkred},
+	morestring = [b]',
+	morestring = [b]",
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{Bash}{%Use 'bash' for the natively support bash listings
+	keywords = [1]{cd, ls, ls -l, rm, sudo, scp},
+	%keywordstyle = \color{blue}\bfseries,
+	morekeywords = [2]{install, run, add, serve, build},
+	%keywordstyle = [2]\color{green}\bfseries,
+	morekeywords = [3]{for, do, done},
+	%keywordstyle = [3]\color{purple}\bfseries,
+	morekeywords = [4]{maxGSS, resultField},
+	%keywordstyle = [4]\color{orange}\bfseries,
+	morekeywords = [5]{arangoimpor},
+	%keywordstyle = [5]\color{orange}\bfseries,
+	%identifierstyle = \color{darkestgray},
+	sensitive = false,
+	%comment = [l]{//},
+	comment = [l]{\#},
+	%morecomment = [s]{/*}{*/},
+	%commentstyle = \color{darkgray},
+	morestring = [b]',
+	morestring = [b]",
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{Cypher}{
+	%identifierstyle = \color{darkestgray},
+	keywords = [1]{MATCH, RETURN},
+	%keywordstyle = \color{darkgreen}\bfseries,
+	moredelim = [s][\color{darkblue}\bfseries]{<-}{-},
+	moredelim = [s][\color{darkblue}\bfseries]{-}{->},
+	morestring = [s][\color{darkred}\bfseries]{'}{'},
+	%morecomment = [l]{//},
+	%commentstyle = \color{darkgray},
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{GraphQL}{
+	keywords = [1]{type},
+	%keywordstyle = \color{darkblue}\bfseries,
+	morekeywords = [2]{String, Int, Url, Affiliation, Author, Publication, Institution, Year, Query, Note, SuggestedNode, SlimNode, SlimEdge, SlimGraph, Community},
+	%keywordstyle = [2]\color{darkgreen}\bfseries,
+	morekeywords = [3]{address, label, value, the_type, appearances, _id, graph_name, _from, _to, startNode, vertices, edges, name, orcid, bibtex, aux, graph_name, kind, other_orcid, isnot, url, other_names, affiliation, note, title, author, year, node_id, minDepth, maxDepth, communities, community, number},
+	%keywordstyle = [3]\color{mauve},
+	morekeywords = [4]{nodesID, nodeGraph},
+	%keywordstyle = [4]\color{orange}\bfseries,
+	morekeywords = [5]{getNodesIDByName, getNodeGraph},
+	%keywordstyle = [5]\color{orange}\bfseries,
+	comment = [l]{//},
+	%commentstyle = \color{darkgray},
+	morestring = [b]',
+	morestring = [b]`,
+	morestring = [b]",
+	%stringstyle = \color{darkred},
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{JavaScript}{
+	keywords = [1]{typeof, new, true, false, null, in, const, args, root, default},
+	%keywordstyle = [1]\color{darkblue}\bfseries,
+	morekeywords = [2]{if, try, catch, return, var, let, switch, while, do, else, case},
+	%keywordstyle = [2]\color{darkgreen}\bfseries,
+	morekeywords = [3]{class, function, export, boolean, throw, implements, import, this, from, break, continue, await, async, req, res},
+	%keywordstyle = [3]\color{darkgreen}\bfseries,
+	morekeywords = [4]{config, use, start, log, get, listen, end},
+	%keywordstyle = [4]\color{orange}\bfseries,
+	%identifierstyle = \color{purple},
+	sensitive = false,
+	comment = [l]{//},
+	morecomment = [s]{/*}{*/},
+	%commentstyle = \color{darkgray},
+	morestring = [b]',
+	morestring = [b]`,
+	morestring = [b]",
+	%stringstyle = \color{darkred},
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{PseudoCode}{
+	keywords = [1]{for, do, if, end, then, while},
+	%keywordstyle = [1]\color{darkestgray}\bfseries,
+	morekeywords = [2]{not, max},
+	%keywordstyle = [2]\color{darkestgray}\bfseries,
+	morekeywords = [3]{Input, Initialization, Output, Algorithm, msg, to},
+	%keywordstyle = [3]\color{darkestgray}\bfseries,
+	%identifierstyle = \color{darkestgray},
+	morekeywords = [4]{communicate, compute},
+	%keywordstyle = [4]\color{orange}\bfseries,
+	morekeywords = [5]{send},
+	%keywordstyle = [5]\color{green}\bfseries,
+	sensitive = false,
+	comment = [l]{//},
+	morecomment = [s]{/*}{*/},
+	%commentstyle = \color{darkgray},
+	%stringstyle = \color{darkergray},
+	backgroundcolor = \color{lightestgray},
+	basicstyle = \footnotesize,
+	morestring = [b]',
+	morestring = [b]",
+	showstringspaces = false,
+	showspaces = false,
+	numbers = none,
+	%numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b,
+	numbersep = 0pt,
+	xleftmargin = 0pt,
+	xrightmargin = 0pt,
+	framesep = 2pt,
+	framerule = 2pt,
+	frame = {}
+}
+
+\lstdefinelanguage{Rust}{
+	sensitive,
+	morecomment = [l]{//},
+	morecomment = [s]{/*}{*/},
+	moredelim = [s][{\itshape\color[rgb]{0,0,0.75}}]{\#[}{]},
+	morestring = [b]{"},
+	alsodigit = {},
+	alsoother = {},
+	alsoletter = {!},
+	keywords = [1]{break, continue, else, for, if, in, loop, match, return, while},  % control flow keywords
+	morekeywords = [2]{as, const, let, move, mut, ref, static},  % in the context of variables
+	morekeywords = [3]{dyn, enum, fn, impl, Self, self, struct, trait, type, union, use, where, crate, extern, mod, pub, super, unsafe},  % in the context of declarations, in the context of modularisation and markers
+	morekeywords = [4]{Err, false, None, Ok, Some, true, abstract, alignof, become, box, do, final, macro, offsetof, override, priv, proc, pure, sizeof, typeof, unsized, virtual, yield}, % reserved identifiers and prelude value constructors
+	morekeywords = [5]{bool, char, f32, f64, i8, i16, i32, i64, isize, str, u8, u16, u32, u64, unit, usize, i128, u128},  % primitive types
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{Scala}{
+	keywords = [1]{new, true, false, override, implements, import, this, with, super, catch, function, return, null, throw, switch, if, in, while, do, else, case, break, continue, foldleft, foreach, filter, map, def, super, this, throw, extends},
+	%keywordstyle = \color{darkgreen}\bfseries,
+	morekeywords = [2]{class, object, val, boolean, var, Int, String, List, trait, protected, private, public, Unit},
+	%keywordstyle = [2]\color{darkblue}\bfseries,
+	%identifierstyle = \color{darkestgray},
+	sensitive = false,
+	comment = [l]{//},
+	morecomment = [s]{/*}{*/},
+	%commentstyle = \color{darkgray},
+	%stringstyle = \color{darkred},
+	morestring = [b]',
+	morestring = [b]",
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+% natively supported
+\lstdefinelanguage{SPARQL}{
+	%identifierstyle = \color{darkestgray},
+	morestring = [s][\color{red}]{"}{"},
+	morestring = [s][\color{darkpurple}]{<http}{/>},
+	keywords = [1]{SELECT, CONSTRUCT, DESCRIBE, ASK, WHERE, FROM, NAMED, PREFIX, BASE, OPTIONAL, FILTER, GRAPH, LIMIT, OFFSET, SERVICE, UNION, EXISTS, NOT, BINDINGS, MINUS, a},
+	morekeywords = [2]{sn},
+	morekeywords = [3]{type, knows, firstName},
+	morekeywords = [4]{N, X, Y},
+	sensitive = true,
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinelanguage{TypeScript}{
+	keywords = [1]{public, private, readonly, this, typeof, new, true, false, function, return, null, try, catch, switch, var, let, const, class, interface, undefined, null, async, get, default},
+	%keywordstyle = \color{darkblue}\bfseries,
+	morekeywords = [2]{number, string, boolean, any, _from, _to, _id, the_name, the_community},
+	%keywordstyle = [2]\color{darkgreen}\bfseries,
+	morekeywords = [3]{export, throw, implements, import, from, if, in, while, for, do, else, case, break, await},
+	%keywordstyle = [3]\color{mauve},
+	morekeywords = [4]{type, placeholder, className, xs, md, controlId, onSubmit, variant, elements, style, layout, width, height, backgroundColor, border, data, name, ready, stop, fit, padding, animate, edgeLength, nodeSpacing, source, target, label, id, parent, labelPosition, position, selectable, locked, grabbable, as, animation, size, role, aria-hidden, disabled, value, onChange, isInvalid, isValid, key, onClick, onFocus, onBlur, shape, animationDuration, componentSpacing, edgeElasticity, gravity, gravityCompound, gravityRange, gravityRangeCompound, initialEnergyOnIncremental, minTemp, nestingFactor, nodeDimensionsIncludeLabels, nodeOverlap, nodeRepulsion, numIter, quality, randomize, refresh, tile, tilingPaddingVertical, tilingPaddingHorizontal, layoutBy, fisheye, undoable, cueEnabled, expandCollapseCuePosition, expandCollapseCueSize, expandCollapseCueLineSize, expandCueImage, collapseCueImage, expandCollapseCueSensitivity, groupEdgesOfSameTypeOnCollapse, allowNestedEdgeCollapse, zIndex},
+	keywordstyle = [4]\color{cyan}\bfseries,
+	morekeywords = [5]{div, span, footer, header, h1, hr, Fragment, Container, Content, Row, Col, React, SearchForm, Form, Button, Group, Label, Control, Text, ListGroup, Spinner, SearchFormNodeGraph, Label, Feedback, Item, CytoscapeGraph, Cytoscape, CytoscapeComponent, Cola, },
+	keywordstyle = [5]\color{orange}\bfseries,
+	comment = [l]{//},
+	%commentstyle = \color{darkgray},
+	morestring = [b]',
+	morestring = [b]`,
+	morestring = [b]",
+	%stringstyle = \color{darkred},
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+% natively supported
+\lstdefinelanguage{XML}{
+	morestring = [s][\color{mauve}]{"}{"},
+	%morestring = [s][\color{darkestgray}]{>}{<},
+	%morecomment = [s]{<?}{?>},
+	morecomment = [s][\color{darkgreen}]{<!--}{-->},
+	%stringstyle = \color{darkred},
+	%identifierstyle = \color{darkestgray},
+	keywords = [1]{xmlns, xsi, noNamespaceSchemaLocation, type, id, x, y, source, target, version, tool, transRef, roleRef, objective, eventually, xml, DOCTYPE},% list your attributes here
+	%keywordstyle = \color{purple},
+	morekeywords = [2]{rdf, rdfs, foaf, version, encoding},
+	%keywordstyle = [2]\color{blue},
+	morekeywords = [3]{name, mbox, resource, knows, nodeID, seeAlso, mdate, publtype, key},
+	%keywordstyle = [3]\color{orange},
+	morekeywords = [4]{Person, title, author, year, school},
+	%keywordstyle = [4]\color{green},
+	morekeywords = [5]{RDF, phdthesis, article},
+	%keywordstyle = [5]\color{mauve},
+	showstringspaces = false,
+	showspaces = false,
+	numbers = left,
+	%numberstyle = \footnotesize,
+	tabsize = 4,
+	breaklines = true,
+	showtabs = false,
+	captionpos = b
+}
+
+\lstdefinestyle{mystyle}{
+	identifierstyle = \color{darkestgray},
+	backgroundcolor = \color{lightestgray},
+	%rulecolor = \color{green},
+	%fillcolor = \color{red},
+	%rulesepcolor = \color{blue},
+	rulecolor = \color{lightestgray},
+	fillcolor = \color{lightestgray},
+	rulesepcolor = \color{lightestgray},
+	keywordstyle = \color{ForestGreen}\bfseries,
+	keywordstyle = [2]\color{RoyalBlue}\bfseries,
+	keywordstyle = [3]\color{RoyalPurple}\bfseries,
+	keywordstyle = [4]\color{Magenta}\bfseries,
+	keywordstyle = [5]\color{YellowOrange}\bfseries,
+	%ndkeywordstyle = \color{Purple}\bfseries,
+	stringstyle = \color{Mahogany},
+	basicstyle = \ttfamily\footnotesize,
+	commentstyle = \color{darkgray},
+	numberstyle = \tiny\color{gray},
+	breakatwhitespace = false,
+	breaklines = true,
+	extendedchars = true,
+	keepspaces = true,
+	numbers = left,
+	firstnumber = auto,
+	numbersep = 3pt,
+	framesep = 2pt,
+	framerule = 2pt,
+	frame = {},
+	numberstyle = \footnotesize,
+	showspaces = false,
+	showstringspaces = false,
+	showlines = true,% prints empty lines at the end of listings
+	showtabs = false,
+	captionpos = b,
+	tabsize = 4,
+	belowcaptionskip = 0pt,
+	abovecaptionskip = -1.2pt,
+	xleftmargin = 12pt,
+	xrightmargin = 0pt
+}
+
+\lstset{style = mystyle}% listing style
+
+\makeatletter%
+\newcounter{parentlstlisting}% Counter for parent lstlisting, sublistings with letters.
+\newenvironment{sublstlisting}{%
+	\refstepcounter{lstlisting}%
+	\protected@edef\theparentlstlisting{\thelstlisting}%
+	\setcounter{parentlstlisting}{\value{lstlisting}}%
+	\setcounter{lstlisting}{0}%
+	\ifdefined\theHlstlisting%
+		\def\theHlstlisting{%
+			\theparentlstlisting\ (\alph{lstlisting})%
+		}%
+	\fi%
+	\def\thelstlisting{%
+		\theparentlstlisting\ (\alph{lstlisting})%
+	}%
+	\ignorespaces%
+}{%
+	\setcounter{lstlisting}{\value{parentlstlisting}}%
+	\ignorespacesafterend%
+}%
+\makeatother%
+
+\DeclareCaptionFormat{mylistinglabelformat}{%
+	\IfInteger{\theparentlstlisting}{% not sublisting caption
+		\vspace*{0pt}%
+		\fcolorbox{lightgray}{lightgray}{%
+			\parbox{1\linewidth-7pt}{%
+				\hspace*{3pt}%
+				\protect\hyperref[Listofcodelistings]{\footnotesize\faListUl}%
+				\ \ %
+				#1%
+				#2%
+				#3%
+			}%
+		}%
+	}{% sublisting caption
+	    %\ \footnotesize\faEllipsisV\large% vertical ellipsis
+		\hspace*{12pt}%
+		\fcolorbox{lightergray}{lightergray}{%
+			\parbox{1\linewidth-19pt}{%
+				\hspace*{3pt}%
+				\protect\hyperref[Listofcodelistings]{\footnotesize\faListUl}% comment this to remove hyperlinked icon in sublistings caption
+				\ \ %
+				#1%
+				#2%
+				#3%
+			}%
+		}%
+	}%
+}%
+
+\captionsetup[lstlisting]{format = mylistinglabelformat}
