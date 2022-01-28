@@ -1,6 +1,7 @@
 # Computer Science and Engineering Master's Degree Thesis
 
 **Title**: Clustering Graphs
+
 **Subtitle**: Applying a Label Propagation Algorithm to Detect Communities in Graph Databases
 
 The thesis is on the detection of collaboration communities in the academia by making use of graph databases such as Neo4j or ArangoDB and a Label Propagation Community Detection Algorithm. To visualize the results, a full webapp was build made of a frontend interface with React, TypeScript and CytoscapeJS consuming a custom built GraphQL API with NodeJS and Express.
